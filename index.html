@@ -46,16 +46,10 @@ input:focus{border-color:#555;background:var(--bg3)}
 .sbh h2{font-size:15px;font-weight:800;letter-spacing:-.3px}
 .sbh h2 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sbh small{color:var(--dim);font-size:10px;display:block}
-.plan-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.5px;margin-left:4px;vertical-align:middle}
-.plan-badge.free{background:var(--bg3);color:var(--dim);border:1px solid var(--bd2)}
-.plan-badge.premium{background:var(--gold);color:#000}
 .nb{margin:12px;padding:11px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#fff;transition:all .2s}
 .nb:hover{background:var(--grad);color:#000}
 .nb:hover svg{stroke:#000}
 .nb svg{width:16px;height:16px;stroke:#fff;stroke-width:2.2;fill:none;transition:stroke .2s}
-.upgrade-btn{margin:0 12px 12px;padding:11px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;font-weight:700;color:#000;transition:all .2s}
-.upgrade-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,215,0,.3)}
-.upgrade-btn svg{width:15px;height:15px;stroke:#000;stroke-width:2.2;fill:none}
 .cl{flex:1;overflow-y:auto;padding:4px 10px 12px}
 .ci{padding:10px 12px;border-radius:9px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);cursor:pointer;margin-bottom:2px;transition:.15s}
 .ci:hover{background:var(--bg2);color:#fff}
@@ -67,7 +61,21 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ci .del:hover{background:rgba(255,77,77,.2)}
 .ci .del svg{width:12px;height:12px}
 .ci .del:hover svg{stroke:var(--red)}
-.sbf{padding:14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:12px}
+
+/* BOTÃO PLANO ACIMA DO PERFIL */
+.plan-btn{margin:0 10px 8px;padding:10px 12px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(184,134,11,.15));border:1px solid rgba(255,215,0,.35);border-radius:11px;display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:#ffd700;transition:all .2s;width:calc(100% - 20px);cursor:pointer}
+.plan-btn:hover{background:var(--gold);color:#000;border-color:transparent;transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,215,0,.3)}
+.plan-btn:hover svg{stroke:#000}
+.plan-btn svg{width:18px;height:18px;stroke:#ffd700;stroke-width:2.2;fill:none;flex-shrink:0;transition:stroke .2s}
+.plan-btn .pbt{flex:1;text-align:left;line-height:1.25}
+.plan-btn .pbt b{display:block;font-size:12.5px}
+.plan-btn .pbt small{display:block;font-size:10px;font-weight:500;color:var(--dim);margin-top:1px}
+.plan-btn:hover .pbt small{color:rgba(0,0,0,.65)}
+.plan-btn.premium{background:var(--gold);color:#000;border-color:transparent}
+.plan-btn.premium svg{stroke:#000}
+.plan-btn.premium .pbt small{color:rgba(0,0,0,.65)}
+
+.sbf{padding:12px 14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:12px}
 .av{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden;position:relative}
 .av img{width:100%;height:100%;object-fit:cover}
 .av.premium::after{content:'👑';position:absolute;top:-4px;right:-4px;font-size:12px}
@@ -183,7 +191,7 @@ input:focus{border-color:#555;background:var(--bg3)}
 
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-bg.on{display:flex}
-.modal{width:100%;max-width:480px;background:var(--bg1);border:1px solid var(--bd2);border-radius:18px;padding:24px;animation:mi .3s ease;max-height:85vh;overflow-y:auto}
+.modal{width:100%;max-width:480px;background:var(--bg1);border:1px solid var(--bd2);border-radius:18px;padding:24px;animation:mi .3s ease;max-height:88vh;overflow-y:auto}
 .modal h3{font-size:17px;margin-bottom:6px;font-weight:700;display:flex;align-items:center;gap:8px}
 .modal h3 svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none}
 .modal p{color:var(--dim);font-size:12.5px;margin-bottom:16px;line-height:1.5}
@@ -196,33 +204,62 @@ input:focus{border-color:#555;background:var(--bg3)}
 .btn-save{background:var(--grad);color:#000}
 .btn-save:hover{background:var(--gradh)}
 
-.pay-header{text-align:center;margin-bottom:20px}
-.pay-icon{width:64px;height:64px;margin:0 auto 14px;background:var(--gold);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(255,215,0,.25)}
-.pay-icon svg{width:32px;height:32px;stroke:#000;stroke-width:2.2;fill:none}
-.pay-header h3{justify-content:center;font-size:20px;margin-bottom:6px}
-.pay-header p{font-size:12.5px;margin-bottom:0}
-.plan-info{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px;margin-bottom:18px}
-.plan-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px solid var(--bd)}
-.plan-row:last-child{border-bottom:none}
-.plan-row span{color:var(--dim)}
-.plan-row b{color:#fff}
-.plan-row.highlight b{color:#ffd700}
-.pix-box{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(184,134,11,.08));border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:16px;margin-bottom:18px;text-align:center}
-.pix-box small{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;display:block;margin-bottom:6px}
-.pix-key{font-family:Consolas,Monaco,monospace;font-size:14px;color:#ffd700;font-weight:700;word-break:break-all;margin-bottom:10px}
-.copy-pix{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--bd2);color:#fff;font-size:12px;font-weight:600;transition:.15s}
-.copy-pix:hover{background:var(--gold);color:#000}
-.copy-pix svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
-.upload-area{background:var(--bg2);border:2px dashed var(--bd2);border-radius:12px;padding:24px 16px;text-align:center;margin-bottom:14px;cursor:pointer;transition:.2s}
-.upload-area:hover{border-color:#555;background:var(--bg3)}
-.upload-area svg{width:28px;height:28px;stroke:var(--dim);stroke-width:1.8;fill:none;margin-bottom:8px}
-.upload-area p{font-size:12.5px;color:var(--dim);margin:0}
+/* PAY MODAL */
+.pay-header{text-align:center;margin-bottom:22px}
+.pay-icon{width:70px;height:70px;margin:0 auto 16px;background:var(--gold);border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(255,215,0,.3)}
+.pay-icon svg{width:36px;height:36px;stroke:#000;stroke-width:2.2;fill:none}
+.pay-header h3{justify-content:center;font-size:22px;margin-bottom:6px;font-weight:800;letter-spacing:-.4px}
+.pay-header h3 span{background:var(--gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.pay-header p{font-size:12.5px;margin-bottom:0;color:var(--dim)}
+
+.benefits{background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(184,134,11,.06));border:1px solid rgba(255,215,0,.25);border-radius:14px;padding:16px;margin-bottom:18px}
+.benefits-title{font-size:11px;color:#ffd700;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.benefits-title svg{width:13px;height:13px;stroke:#ffd700;stroke-width:2.2;fill:none}
+.benefit-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;font-size:13px;border-bottom:1px solid rgba(255,215,0,.1)}
+.benefit-row:last-child{border-bottom:none}
+.benefit-row .br-left{display:flex;align-items:center;gap:9px;color:#e0e0e0}
+.benefit-row .br-left svg{width:15px;height:15px;stroke:#ffd700;stroke-width:2;fill:none;flex-shrink:0}
+.benefit-row .br-right{font-weight:700;color:#ffd700;font-size:12.5px}
+.benefit-row .br-right s{color:var(--dim);font-weight:500;margin-right:4px;font-size:11.5px}
+
+.price-tag{text-align:center;margin-bottom:18px}
+.price-tag .price-val{font-size:42px;font-weight:900;background:var(--gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-2px;line-height:1}
+.price-tag .price-per{font-size:13px;color:var(--dim);margin-top:4px}
+
+.pix-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center}
+.pix-box small{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;display:block;margin-bottom:8px}
+.pix-key{font-family:Consolas,Monaco,monospace;font-size:14px;color:#ffd700;font-weight:700;word-break:break-all;margin-bottom:12px}
+.copy-pix{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;background:var(--gold);color:#000;font-size:12px;font-weight:700;transition:.15s;cursor:pointer;border:none}
+.copy-pix:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,215,0,.3)}
+.copy-pix svg{width:14px;height:14px;stroke:#000;stroke-width:2.2;fill:none}
+
+.form-section{margin-top:18px}
+.form-section label{display:block;font-size:11px;color:var(--dim);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.form-section input{width:100%;padding:12px 14px;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;color:#fff;font-size:14px;outline:none;margin-bottom:12px;transition:.2s}
+.form-section input:focus{border-color:#555;background:var(--bg3)}
+.form-section input:disabled{opacity:.6;cursor:not-allowed}
+
+.upload-area{background:var(--bg2);border:2px dashed var(--bd2);border-radius:12px;padding:22px 16px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:12px}
+.upload-area:hover{border-color:#ffd700;background:var(--bg3)}
+.upload-area svg{width:30px;height:30px;stroke:var(--dim);stroke-width:1.8;fill:none;margin-bottom:8px}
 .upload-area b{color:#fff;display:block;margin-bottom:4px;font-size:13px}
-.upload-preview{position:relative;margin-bottom:14px;border-radius:12px;overflow:hidden;border:1px solid var(--bd2)}
+.upload-area p{font-size:11.5px;color:var(--dim);margin:0}
+
+.upload-preview{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--bd2);margin-bottom:12px}
 .upload-preview img{width:100%;display:block;max-height:260px;object-fit:contain;background:#000}
-.upload-remove{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;transition:.15s}
+.upload-remove{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
 .upload-remove:hover{background:var(--red)}
 .upload-remove svg{width:16px;height:16px;stroke:#fff;stroke-width:2.5;fill:none}
+
+.send-pay-btn{width:100%;padding:14px;border-radius:11px;background:var(--gold);color:#000;font-weight:800;font-size:14px;border:none;cursor:pointer;transition:.2s;letter-spacing:.2px}
+.send-pay-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,215,0,.3)}
+.send-pay-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.pay-success{text-align:center;padding:20px 0}
+.pay-success-icon{width:72px;height:72px;margin:0 auto 18px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(74,222,128,.3)}
+.pay-success-icon svg{width:36px;height:36px;stroke:#000;stroke-width:3;fill:none}
+.pay-success h3{justify-content:center;font-size:20px;margin-bottom:10px;color:#fff}
+.pay-success p{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:22px}
 
 #htmlPreview{position:fixed;inset:0;z-index:500;background:#0a0a0a;display:none;flex-direction:column}
 #htmlPreview.on{display:flex}
@@ -258,6 +295,7 @@ input:focus{border-color:#555;background:var(--bg3)}
   .ca{padding:16px 0}
   .cin{padding:0 12px}
   .iw{padding:10px 12px 14px}
+  .price-tag .price-val{font-size:36px}
 }
 </style>
 </head>
@@ -297,14 +335,23 @@ input:focus{border-color:#555;background:var(--bg3)}
   <aside class="sb" id="sb">
     <div class="sbh">
       <div class="sbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
-      <div><h2>EXILED <span>AI</span><span class="plan-badge free" id="planBadgeTop">FREE</span></h2><small>Powered by Groq + Agnes</small></div>
+      <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
     </div>
     <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
-    <button class="upgrade-btn" id="btnUpgrade">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
-      <span id="upgradeBtnText">Virar Premium</span>
-    </button>
     <div class="cl" id="cl"></div>
+
+    <!-- BOTÃO PLANO ACIMA DO PERFIL -->
+    <button class="plan-btn" id="planBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12l4 6-10 12L2 9l4-6z"/>
+        <path d="M2 9h20M12 21l-4-12M12 21l4-12"/>
+      </svg>
+      <div class="pbt">
+        <b id="planBtnTitle">Virar Premium</b>
+        <small id="planBtnSub">Dobre todos os limites</small>
+      </div>
+    </button>
+
     <div class="sbf">
       <div class="av" id="av">?</div>
       <div class="ui"><b id="un">User</b><small id="ue">email</small></div>
@@ -348,6 +395,7 @@ input:focus{border-color:#555;background:var(--bg3)}
   </main>
 </div>
 
+<!-- MODAL TURBINAR -->
 <div class="modal-bg" id="modalTurbo">
   <div class="modal">
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>Prompt Turbinado</h3>
@@ -360,68 +408,106 @@ input:focus{border-color:#555;background:var(--bg3)}
   </div>
 </div>
 
+<!-- MODAL PLANO / PAGAMENTO -->
 <div class="modal-bg" id="modalPay">
   <div class="modal">
-    <div class="pay-header">
-      <div class="pay-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg></div>
-      <h3 id="payTitle">Virar Premium</h3>
-      <p id="paySubtitle">Dobre todos os seus limites diários</p>
-    </div>
-
     <div id="payContent">
-      <div class="plan-info">
-        <div class="plan-row"><span>Análise de imagem</span><b>5 → 10 / dia</b></div>
-        <div class="plan-row"><span>Transcrição de voz</span><b>20 → 40 / dia</b></div>
-        <div class="plan-row highlight"><span>Geração de imagem</span><b>6 → 12 / dia</b></div>
-        <div class="plan-row"><span>Chat de texto</span><b>100 → 200 / dia</b></div>
+      <div class="pay-header">
+        <div class="pay-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h12l4 6-10 12L2 9l4-6z"/>
+            <path d="M2 9h20M12 21l-4-12M12 21l4-12"/>
+          </svg>
+        </div>
+        <h3>Virar <span>Premium</span></h3>
+        <p>Desbloqueie o dobro de todos os limites</p>
+      </div>
+
+      <div class="benefits">
+        <div class="benefits-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          O que você ganha
+        </div>
+        <div class="benefit-row">
+          <div class="br-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            Análise de imagem
+          </div>
+          <div class="br-right"><s>5</s>10/dia</div>
+        </div>
+        <div class="benefit-row">
+          <div class="br-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+            Transcrição de voz
+          </div>
+          <div class="br-right"><s>20</s>40/dia</div>
+        </div>
+        <div class="benefit-row">
+          <div class="br-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
+            Geração de imagem
+          </div>
+          <div class="br-right"><s>6</s>12/dia</div>
+        </div>
+        <div class="benefit-row">
+          <div class="br-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Chat de texto
+          </div>
+          <div class="br-right"><s>100</s>200/dia</div>
+        </div>
+      </div>
+
+      <div class="price-tag">
+        <div class="price-val">R$ 10</div>
+        <div class="price-per">por 30 dias</div>
       </div>
 
       <div class="pix-box">
-        <small>Chave PIX para pagamento</small>
+        <small>Pague via PIX</small>
         <div class="pix-key" id="pixKeyText">sampteken@gmail.com</div>
         <button class="copy-pix" onclick="copyPixKey()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copiar chave
+          Copiar chave PIX
         </button>
       </div>
 
-      <div class="plan-info">
-        <div class="plan-row"><span>Valor</span><b>R$ 10,00</b></div>
-        <div class="plan-row"><span>Duração</span><b>30 dias</b></div>
-      </div>
+      <div class="form-section">
+        <label>Nome</label>
+        <input type="text" id="payName" placeholder="Seu nome" autocomplete="off">
+        <label>E-mail</label>
+        <input type="email" id="payEmail" placeholder="voce@email.com" disabled>
 
-      <label style="margin-top:4px">Seu nome (pra confirmar)</label>
-      <input type="text" id="payName" placeholder="Como quer ser chamado" autocomplete="off">
-
-      <input type="file" id="payFile" accept="image/*" style="display:none">
-      <div id="payUploadArea">
-        <div class="upload-area" onclick="document.getElementById('payFile').click()">
+        <label>Comprovante de pagamento</label>
+        <input type="file" id="payFile" accept="image/*" style="display:none">
+        <div class="upload-area" id="payUploadArea" onclick="document.getElementById('payFile').click()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
           <b>Anexar comprovante</b>
-          <p>PNG, JPG ou PDF do pagamento</p>
+          <p>Toque para escolher a foto</p>
         </div>
+        <div id="payPreview"></div>
       </div>
-      <div id="payPreview"></div>
 
       <p class="err" id="payErr"></p>
 
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closePay()">Cancelar</button>
-        <button class="btn-save" id="paySendBtn" onclick="sendComprovante()">Enviar comprovante</button>
-      </div>
+      <button class="send-pay-btn" id="paySendBtn" onclick="sendComprovante()">
+        Enviar comprovante
+      </button>
+      <button class="btn-cancel" style="width:100%;margin-top:10px" onclick="closePay()">Cancelar</button>
     </div>
 
-    <div id="paySuccess" style="display:none;text-align:center;padding:20px 0">
-      <div style="width:64px;height:64px;margin:0 auto 16px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px"><path d="M20 6L9 17l-5-5"/></svg>
+    <div class="pay-success" id="paySuccess" style="display:none">
+      <div class="pay-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
       </div>
-      <h3 style="justify-content:center;margin-bottom:8px">Comprovante enviado!</h3>
-      <p style="color:var(--dim);font-size:13px;line-height:1.6">Seu pagamento será analisado em até 24h.<br>Você receberá a liberação automaticamente.</p>
-      <button class="btn-save" style="width:100%;margin-top:20px;padding:11px;border-radius:10px;font-weight:600;font-size:13px;background:var(--grad);color:#000" onclick="closePay()">OK, entendi</button>
+      <h3>Comprovante enviado!</h3>
+      <p>Seu pagamento será analisado em até 24h.<br>Você receberá a liberação automaticamente.</p>
+      <button class="send-pay-btn" onclick="closePay()">OK, entendi</button>
     </div>
   </div>
 </div>
 
+<!-- PREVIEW HTML -->
 <div id="htmlPreview">
   <div class="prev-bar">
     <div class="prev-title">
@@ -475,8 +561,8 @@ const AGNES_URL='https://apihub.agnes-ai.com/v1/images/generations';
 const VISION_MODEL='meta-llama/llama-4-scout-17b-16e-instruct';
 const STT_MODEL='whisper-large-v3-turbo';
 
-const RENDER_URL = 'https://exiled-bot.onrender.com';
-const PIX_KEY = 'sampteken@gmail.com';
+const RENDER_URL='https://exiled-bot.onrender.com';
+const PIX_KEY='sampteken@gmail.com';
 
 const LIMITS={imgAnalysis:5,transcribe:20,imageGen:6,textChat:100};
 const LS={lim:'exlim'};
@@ -531,25 +617,19 @@ function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');cle
 function showLoading(txt){$('loadingText').textContent=txt||'Carregando...';$('loadingOverlay').classList.add('on')}
 function hideLoading(){$('loadingOverlay').classList.remove('on')}
 
+// ========== PLANO ==========
 function applyPlano(){
-  var badge=$('planBadgeTop');
-  var av=$('av');
-  var upText=$('upgradeBtnText');
-  var upBtn=$('btnUpgrade');
+  var btn=$('planBtn'),title=$('planBtnTitle'),sub=$('planBtnSub'),av=$('av');
   if(S.plano==='premium'){
-    badge.className='plan-badge premium';
-    badge.textContent='PREMIUM';
+    btn.classList.add('premium');
+    title.textContent='Premium Ativo 👑';
+    sub.textContent='Limites dobrados';
     av.classList.add('premium');
-    upText.textContent='Você é Premium 👑';
-    upBtn.style.opacity='.7';
-    upBtn.onclick=function(){toast('Você já é Premium!');};
   }else{
-    badge.className='plan-badge free';
-    badge.textContent='FREE';
+    btn.classList.remove('premium');
+    title.textContent='Virar Premium';
+    sub.textContent='Dobre todos os limites';
     av.classList.remove('premium');
-    upText.textContent='Virar Premium';
-    upBtn.style.opacity='1';
-    upBtn.onclick=openPay;
   }
   updateBadges();
 }
@@ -571,21 +651,30 @@ async function loadPlano(){
   }catch(e){console.log('plano',e)}
 }
 
+// ========== MODAL PAY ==========
 function openPay(){
-  $('pixKeyText').textContent=PIX_KEY;
+  if(S.plano==='premium'){
+    toast('Você já é Premium! 👑');
+    return;
+  }
   $('modalPay').classList.add('on');
   $('payContent').style.display='block';
   $('paySuccess').style.display='none';
   $('payErr').textContent='';
   $('payName').value=S.user?S.user.name:'';
+  $('payEmail').value=S.user?S.user.email:'';
+  $('pixKeyText').textContent=PIX_KEY;
   S.payAttachment=null;
   $('payUploadArea').style.display='block';
   $('payPreview').innerHTML='';
   $('payFile').value='';
 }
 window.closePay=function(){$('modalPay').classList.remove('on')};
+
 window.copyPixKey=function(){
-  if(navigator.clipboard)navigator.clipboard.writeText(PIX_KEY).then(function(){toast('✅ Chave PIX copiada!')});
+  if(navigator.clipboard)navigator.clipboard.writeText(PIX_KEY).then(function(){
+    toast('✅ Chave PIX copiada!');
+  });
 };
 
 $('payFile').addEventListener('change',function(e){
@@ -609,6 +698,7 @@ window.removePayFile=function(){
 
 window.sendComprovante=async function(){
   var nome=$('payName').value.trim();
+  var email=$('payEmail').value.trim();
   if(!nome){$('payErr').textContent='Digite seu nome';return}
   if(!S.payAttachment){$('payErr').textContent='Anexe o comprovante';return}
 
@@ -623,7 +713,7 @@ window.sendComprovante=async function(){
       body:JSON.stringify({
         uid:S.user.uid,
         nome:nome,
-        email:S.user.email,
+        email:email,
         imagemBase64:S.payAttachment.data
       })
     });
@@ -641,6 +731,7 @@ window.sendComprovante=async function(){
   $('paySendBtn').textContent='Enviar comprovante';
 };
 
+// ========== HTML PREVIEW ==========
 function openHtmlPreview(code,title){
   S.previewCode=code;
   $('prevTitleText').textContent=title||'Preview HTML';
@@ -662,6 +753,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&$('htmlPreview').classList.contains('on'))closeHtmlPreview();
 });
 
+// ========== AUTH ==========
 $('toggleMode').addEventListener('click',function(){
   S.authMode=S.authMode==='login'?'signup':'login';
   var isSignup=S.authMode==='signup';
@@ -761,6 +853,7 @@ function bindEvents(){
   $('btnImg').addEventListener('click',onImgClick);
   $('btnMic').addEventListener('click',onMicClick);
   $('btnTurbinar').addEventListener('click',onTurbinarClick);
+  $('planBtn').addEventListener('click',openPay);
   $('fileInput').addEventListener('change',onFileSelected);
   bindModes();bindInput();
 }
