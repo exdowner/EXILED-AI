@@ -100,6 +100,13 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ma .ct a{color:#fff}
 .ma .ct blockquote{border-left:3px solid #333;padding-left:12px;color:var(--dim);margin:10px 0}
 .ma .ct img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid #222;display:block}
+.imgwrap{margin-top:10px}
+.imgwrap img{max-width:100%;border-radius:10px;border:1px solid #222;display:block}
+.imgbar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.imgbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:var(--bg3);border:1px solid var(--bd2);color:#fff;font-size:12px;font-weight:600;text-decoration:none;transition:.15s}
+.imgbtn:hover{background:var(--grad);color:#000;border-color:transparent}
+.imgbtn:hover svg{stroke:#000}
+.imgbtn svg{width:14px;height:14px;stroke:#fff;stroke-width:2;fill:none;transition:stroke .15s}
 .cb{background:#0d0d0d;border:1px solid var(--bd2);border-radius:11px;overflow:hidden;margin:12px 0}
 .ch{background:#151515;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd2)}
 .clg{font-size:11px;color:var(--dim);font-family:Consolas,monospace;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
@@ -300,7 +307,13 @@ function renderChat(){
   $('cs').textContent=M[S.mode].sub;
   var cin=$('cin');cin.innerHTML='';
   if(!c.messages.length){welcome();return}
-  c.messages.forEach(function(m){addMsg(m.role,m.content,false)});
+  c.messages.forEach(function(m){
+    if(m.role==='assistant' && m.content.indexOf('<!--IMG-->')===0){
+      addMsgRaw(m.content.replace('<!--IMG-->',''));
+    } else {
+      addMsg(m.role,m.content,false);
+    }
+  });
   scrollB();
 }
 
@@ -324,6 +337,16 @@ function addMsg(role,content,anim){
   }else{
     wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+md(content)+'</div>';
   }
+  cin.appendChild(wrap);
+  return wrap;
+}
+
+function addMsgRaw(html){
+  var cin=$('cin');
+  var w=cin.querySelector('.wc');if(w)w.remove();
+  var wrap=document.createElement('div');
+  wrap.className='mg ma';
+  wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+html+'</div>';
   cin.appendChild(wrap);
   return wrap;
 }
@@ -411,10 +434,30 @@ function generateAgnesImage(prompt,chat){
   }).then(function(data){
     rmTyping();
     var imgUrl=data.data&&data.data[0]&&(data.data[0].url||('data:image/png;base64,'+data.data[0].b64_json));
-    if(!imgUrl)throw new Error('Nenhuma URL retornada. Resposta: '+JSON.stringify(data).slice(0,200));
-    var html='<p>🖼️ <em>'+esc(prompt)+'</em></p><img src="'+imgUrl+'" alt="Imagem gerada"><p style="margin-top:10px;font-size:12px;color:#888">🔗 <a href="'+imgUrl+'" target="_blank">Abrir em nova aba</a></p>';
-    chat.messages.push({role:'assistant',content:html});
-    addMsg('assistant',html);
+    if(!imgUrl)throw new Error('Nenhuma URL retornada.');
+    var safePrompt=esc(prompt);
+    var filename='exiled-'+Date.now()+'.png';
+    var html='<p>🖼️ <em>'+safePrompt+'</em></p>'+
+      '<div class="imgwrap">'+
+        '<img src="'+imgUrl+'" alt="'+safePrompt+'" data-filename="'+filename+'" class="genimg">'+
+        '<div class="imgbar">'+
+          '<a class="imgbtn" href="'+imgUrl+'" download="'+filename+'" target="_blank" rel="noopener">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>'+
+            'Baixar'+
+          '</a>'+
+          '<button class="imgbtn" onclick="copyImgUrl(this)" data-url="'+imgUrl+'">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'+
+            'Copiar URL'+
+          '</button>'+
+          '<a class="imgbtn" href="'+imgUrl+'" target="_blank" rel="noopener">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>'+
+            'Abrir'+
+          '</a>'+
+        '</div>'+
+      '</div>';
+    var stored='<!--IMG-->'+html;
+    chat.messages.push({role:'assistant',content:stored});
+    addMsgRaw(html);
     save();scrollB();
   }).catch(function(err){
     rmTyping();
@@ -424,6 +467,18 @@ function generateAgnesImage(prompt,chat){
     S.busy=false;$('se').disabled=false;$('ui').focus();
   });
 }
+
+window.copyImgUrl=function(btn){
+  var url=btn.getAttribute('data-url');
+  if(!url)return;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){
+      var old=btn.innerHTML;
+      btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+      setTimeout(function(){btn.innerHTML=old},1500);
+    });
+  }
+};
 
 function md(text){
   var html=esc(text);
@@ -440,7 +495,6 @@ function md(text){
   html=html.replace(/^# (.+)$/gm,'<h1>$1</h1>');
   html=html.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
   html=html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-  html=html.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g,'<img src="$2" alt="$1">');
   var lines=html.split('\n');
   var out=[],inUl=false,inOl=false;
   for(var k=0;k<lines.length;k++){
