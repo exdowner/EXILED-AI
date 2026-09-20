@@ -65,7 +65,7 @@ input:focus{border-color:#555;background:var(--bg3)}
 .tt{flex:1;min-width:0}
 .tt h3{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tt small{color:var(--dim);font-size:11px}
-.ms{display:flex;gap:6px;background:var(--bg2);padding:4px;border-radius:11px;border:1px solid var(--bd)}
+.ms{display:flex;gap:6px;background:var(--bg2);padding:4px;border-radius:11px;border:1px solid var(--bd);overflow-x:auto}
 .mb{padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;color:var(--dim);display:flex;align-items:center;gap:6px;white-space:nowrap}
 .mb svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.2;fill:none}
 .mb:hover{color:#fff}
@@ -99,6 +99,7 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ma .ct code:not(pre code){background:var(--bg3);padding:2px 6px;border-radius:5px;font-size:12.5px;font-family:Consolas,Monaco,monospace}
 .ma .ct a{color:#fff}
 .ma .ct blockquote{border-left:3px solid #333;padding-left:12px;color:var(--dim);margin:10px 0}
+.ma .ct img{max-width:100%;border-radius:10px;margin-top:10px;border:1px solid #222;display:block}
 .cb{background:#0d0d0d;border:1px solid var(--bd2);border-radius:11px;overflow:hidden;margin:12px 0}
 .ch{background:#151515;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd2)}
 .clg{font-size:11px;color:var(--dim);font-family:Consolas,monospace;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
@@ -147,7 +148,7 @@ input:focus{border-color:#555;background:var(--bg3)}
   <aside class="sb" id="sb">
     <div class="sbh">
       <div class="sbl"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
-      <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq</small></div>
+      <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
     </div>
     <button class="nb" id="nn"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
     <div class="cl" id="cl"></div>
@@ -166,6 +167,7 @@ input:focus{border-color:#555;background:var(--bg3)}
         <button class="mb" data-m="code"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Código</span></button>
         <button class="mb" data-m="fast"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Rápida</span></button>
         <button class="mb" data-m="think"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 011.32-4.24 2.5 2.5 0 011.98-3A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 002.96-3.08 3 3 0 00.34-5.58 2.5 2.5 0 00-1.32-4.24 2.5 2.5 0 00-1.98-3A2.5 2.5 0 0014.5 2z"/></svg><span>Pensar</span></button>
+        <button class="mb" data-m="image"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Imagem</span></button>
       </div>
     </div>
     <div class="ca" id="ca"><div class="cin" id="cin"></div></div>
@@ -183,13 +185,16 @@ input:focus{border-color:#555;background:var(--bg3)}
 (function(){
 var K='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';
 var U='https://api.groq.com/openai/v1/chat/completions';
+var AK='sk-YHIGwJKI72lqvP0JBiIpdETWIM5qwdjt5Hq2zUq41A66pNf4';
+var AU='https://apihub.agnes-ai.com/v1/images/generations';
 var LK={u:'exu',c:'exc',n:'exn',m:'exm'};
 var S={user:null,chats:{},cur:null,mode:'normal',busy:false};
 var M={
  normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.'},
  code:{model:'openai/gpt-oss-120b',temp:.3,sub:'Especialista em código',p:'Você é a EXILED AI no modo CÓDIGO. Engenheiro sênior. Sempre envie código em blocos markdown com a linguagem. Código completo e funcional. Português brasileiro.'},
  fast:{model:'openai/gpt-oss-20b',temp:.6,sub:'Respostas rápidas',p:'Você é a EXILED AI no modo RÁPIDO. Seja concisa e direta. Português brasileiro.'},
- think:{model:'openai/gpt-oss-120b',temp:.5,sub:'Pensar profundo',p:'Você é a EXILED AI no modo PENSAR. Analise com cuidado antes de responder. Português brasileiro.'}
+ think:{model:'openai/gpt-oss-120b',temp:.5,sub:'Pensar profundo',p:'Você é a EXILED AI no modo PENSAR. Analise com cuidado antes de responder. Português brasileiro.'},
+ image:{model:'agnes-image-2.0-flash',temp:0,sub:'Gerar imagens com IA',p:''}
 };
 
 function $(id){return document.getElementById(id)}
@@ -346,17 +351,25 @@ function send(){
   var text=inp.value.trim();
   if(!text)return;
   var c=S.chats[S.cur];if(!c)return;
+
   if(c.messages.length===0){
     c.title=text.slice(0,40)+(text.length>40?'…':'');
     $('ct').textContent=c.title;
     renderList();
   }
+
   c.messages.push({role:'user',content:text});
   addMsg('user',text);
   save();
   inp.value='';inp.style.height='auto';
   S.busy=true;$('se').disabled=true;
   addTyping();
+
+  if(S.mode==='image'){
+    generateAgnesImage(text,c);
+    return;
+  }
+
   var m=M[S.mode];
   var msgs=[{role:'system',content:m.p}].concat(c.messages.map(function(x){return {role:x.role,content:x.content}}));
   fetch(U,{
@@ -381,6 +394,37 @@ function send(){
   });
 }
 
+function generateAgnesImage(prompt,chat){
+  var body={
+    model:'agnes-image-2.0-flash',
+    prompt:prompt,
+    size:'1024x1024',
+    extra_body:{response_format:'url'}
+  };
+  fetch(AU,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+AK},
+    body:JSON.stringify(body)
+  }).then(function(r){
+    if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});
+    return r.json();
+  }).then(function(data){
+    rmTyping();
+    var imgUrl=data.data&&data.data[0]&&(data.data[0].url||('data:image/png;base64,'+data.data[0].b64_json));
+    if(!imgUrl)throw new Error('Nenhuma URL retornada. Resposta: '+JSON.stringify(data).slice(0,200));
+    var html='<p>🖼️ <em>'+esc(prompt)+'</em></p><img src="'+imgUrl+'" alt="Imagem gerada"><p style="margin-top:10px;font-size:12px;color:#888">🔗 <a href="'+imgUrl+'" target="_blank">Abrir em nova aba</a></p>';
+    chat.messages.push({role:'assistant',content:html});
+    addMsg('assistant',html);
+    save();scrollB();
+  }).catch(function(err){
+    rmTyping();
+    addMsg('assistant','❌ **Erro ao gerar imagem**\n\n`'+esc(err.message)+'`');
+    scrollB();
+  }).then(function(){
+    S.busy=false;$('se').disabled=false;$('ui').focus();
+  });
+}
+
 function md(text){
   var html=esc(text);
   var cb=[];
@@ -396,6 +440,7 @@ function md(text){
   html=html.replace(/^# (.+)$/gm,'<h1>$1</h1>');
   html=html.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
   html=html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  html=html.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g,'<img src="$2" alt="$1">');
   var lines=html.split('\n');
   var out=[],inUl=false,inOl=false;
   for(var k=0;k<lines.length;k++){
@@ -417,7 +462,7 @@ function md(text){
   html=out.join('\n');
   html=html.split(/\n{2,}/).map(function(b){
     var t=b.trim();if(!t)return '';
-    if(/^<(h[1-3]|ul|ol|blockquote|pre|div)/.test(t))return t;
+    if(/^<(h[1-3]|ul|ol|blockquote|pre|div|img|p)/.test(t))return t;
     if(t.indexOf('\u0000C')!==-1)return t;
     return '<p>'+t.replace(/\n/g,'<br>')+'</p>';
   }).join('\n');
@@ -459,6 +504,9 @@ function bindModes(){
       try{localStorage.setItem(LK.m,m)}catch(x){}
       updateModes();
       $('cs').textContent=M[m].sub;
+      var inp=$('ui');
+      if(m==='image') inp.placeholder='Descreva a imagem que quer gerar...';
+      else inp.placeholder='Pergunte qualquer coisa...';
     });
   });
 }
