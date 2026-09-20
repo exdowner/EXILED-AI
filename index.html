@@ -62,7 +62,15 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ci .del svg{width:12px;height:12px}
 .ci .del:hover svg{stroke:var(--red)}
 
-/* BOTÃO PLANO ACIMA DO PERFIL */
+.invite-btn{margin:0 10px 6px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd2);border-radius:11px;display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:#fff;transition:all .2s;width:calc(100% - 20px);cursor:pointer}
+.invite-btn:hover{background:var(--grad);color:#000;border-color:transparent}
+.invite-btn:hover svg{stroke:#000}
+.invite-btn svg{width:18px;height:18px;stroke:#fff;stroke-width:2.2;fill:none;flex-shrink:0;transition:stroke .2s}
+.invite-btn .pbt{flex:1;text-align:left;line-height:1.25}
+.invite-btn .pbt b{display:block;font-size:12.5px}
+.invite-btn .pbt small{display:block;font-size:10px;font-weight:500;color:var(--dim);margin-top:1px}
+.invite-btn:hover .pbt small{color:rgba(0,0,0,.65)}
+
 .plan-btn{margin:0 10px 8px;padding:10px 12px;background:linear-gradient(135deg,rgba(244,63,94,.15),rgba(190,18,60,.15));border:1px solid rgba(244,63,94,.4);border-radius:11px;display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:var(--rose);transition:all .2s;width:calc(100% - 20px);cursor:pointer}
 .plan-btn:hover{background:var(--rose-grad);color:#fff;border-color:transparent;transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,63,94,.35)}
 .plan-btn:hover svg{stroke:#fff}
@@ -83,9 +91,11 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ui b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ui small{color:var(--dim);font-size:10.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:.15s}
-.lb:hover{background:rgba(255,77,77,.15)}
+.lb:hover{background:var(--bg3)}
 .lb svg{width:15px;height:15px;stroke:var(--dim);stroke-width:2;fill:none}
-.lb:hover svg{stroke:var(--red)}
+.lb:hover svg{stroke:#fff}
+.lb.red:hover{background:rgba(255,77,77,.15)}
+.lb.red:hover svg{stroke:var(--red)}
 
 .mn{flex:1;display:flex;flex-direction:column;min-width:0}
 .tb{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;background:rgba(10,10,10,.7);backdrop-filter:blur(12px)}
@@ -203,6 +213,9 @@ input:focus{border-color:#555;background:var(--bg3)}
 .btn-cancel:hover{background:#222}
 .btn-save{background:var(--grad);color:#000}
 .btn-save:hover{background:var(--gradh)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{background:#e63e3e}
+.btn-danger:disabled{opacity:.4;cursor:not-allowed}
 
 /* PAY MODAL */
 .pay-header{text-align:center;margin-bottom:22px}
@@ -261,7 +274,43 @@ input:focus{border-color:#555;background:var(--bg3)}
 .pay-success h3{justify-content:center;font-size:20px;margin-bottom:10px;color:#fff}
 .pay-success p{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:22px}
 
-/* LIMITE ATINGIDO MODAL */
+/* INVITE MODAL */
+.invite-code-box{background:linear-gradient(135deg,rgba(244,63,94,.08),rgba(190,18,60,.08));border:1px solid rgba(244,63,94,.3);border-radius:14px;padding:20px;margin-bottom:18px;text-align:center}
+.invite-code{font-family:Consolas,Monaco,monospace;font-size:22px;color:var(--rose);font-weight:900;letter-spacing:2px;word-break:break-all;margin-bottom:14px}
+.copy-invite{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;background:var(--rose-grad);color:#fff;font-size:12.5px;font-weight:700;transition:.15s;cursor:pointer;border:none}
+.copy-invite:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,63,94,.35)}
+.copy-invite svg{width:15px;height:15px;stroke:#fff;stroke-width:2.2;fill:none}
+
+.progress-info{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px;margin-bottom:16px}
+.progress-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);margin-bottom:10px}
+.progress-label b{color:var(--rose);font-size:16px;font-weight:800}
+.progress-bar{width:100%;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--rose-grad);border-radius:4px;transition:width .4s ease;width:0%}
+.progress-hint{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
+.progress-hint b{color:#fff}
+
+/* SETTINGS MODAL */
+.settings-section{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px;margin-bottom:14px}
+.settings-section-title{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.settings-section-title svg{width:13px;height:13px;stroke:var(--dim);stroke-width:2.2;fill:none}
+.settings-section-title.danger{color:var(--red)}
+.settings-section-title.danger svg{stroke:var(--red)}
+.settings-btn{width:100%;padding:11px 14px;border-radius:9px;background:var(--bg3);border:1px solid var(--bd2);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;margin-bottom:8px;cursor:pointer}
+.settings-btn:last-child{margin-bottom:0}
+.settings-btn:hover{background:var(--grad);color:#000;border-color:transparent}
+.settings-btn:hover svg{stroke:#000}
+.settings-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.2;fill:none;transition:stroke .15s}
+.settings-btn.danger{background:rgba(255,77,77,.1);border-color:rgba(255,77,77,.3);color:var(--red)}
+.settings-btn.danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.settings-btn.danger:hover svg{stroke:#fff}
+.settings-btn.danger svg{stroke:var(--red)}
+.settings-btn:disabled{opacity:.5;cursor:not-allowed}
+.settings-note{font-size:11px;color:var(--dim);line-height:1.5;margin-top:8px}
+.warn-box{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.25);border-radius:10px;padding:12px;margin-bottom:14px}
+.warn-box p{color:#ff9999;font-size:12px;line-height:1.5;margin:0}
+.confirm-input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid rgba(255,77,77,.3);border-radius:9px;color:#fff;font-size:13px;outline:none;margin-bottom:12px;font-family:Consolas,Monaco,monospace;letter-spacing:1px;text-align:center}
+.confirm-input:focus{border-color:var(--red)}
+
 .limit-icon{width:70px;height:70px;margin:0 auto 18px;background:linear-gradient(135deg,#3a1015,#1a0508);border:2px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
 .limit-icon svg{width:34px;height:34px;stroke:var(--red);stroke-width:2.5;fill:none}
 
@@ -349,6 +398,18 @@ input:focus{border-color:#555;background:var(--bg3)}
     <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
     <div class="cl" id="cl"></div>
 
+    <button class="invite-btn" id="inviteBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+        <circle cx="8.5" cy="7" r="4"/>
+        <path d="M20 8v6M23 11h-6"/>
+      </svg>
+      <div class="pbt">
+        <b>Convidar amigos</b>
+        <small id="inviteBtnSub">Ganhe Premium grátis</small>
+      </div>
+    </button>
+
     <button class="plan-btn" id="planBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 3h12l4 6-10 12L2 9l4-6z"/>
@@ -363,7 +424,12 @@ input:focus{border-color:#555;background:var(--bg3)}
     <div class="sbf">
       <div class="av" id="av">?</div>
       <div class="ui"><b id="un">User</b><small id="ue">email</small></div>
-      <button class="lb" id="lo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      <button class="lb" id="stg" title="Configurações">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <button class="lb red" id="lo" title="Sair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
     </div>
   </aside>
   <main class="mn">
@@ -517,7 +583,118 @@ input:focus{border-color:#555;background:var(--bg3)}
   </div>
 </div>
 
-<!-- MODAL LIMITE ATINGIDO -->
+<!-- MODAL CONVITE -->
+<div class="modal-bg" id="modalInvite">
+  <div class="modal">
+    <div class="pay-header" style="margin-bottom:18px">
+      <div class="pay-icon" style="background:var(--grad);box-shadow:0 12px 40px rgba(255,255,255,.15)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke:#000">
+          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="8.5" cy="7" r="4"/>
+          <path d="M20 8v6M23 11h-6"/>
+        </svg>
+      </div>
+      <h3>Convidar Amigos</h3>
+      <p>Convide 5 amigos e ganhe Premium grátis</p>
+    </div>
+
+    <div class="invite-code-box">
+      <small style="color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;display:block;margin-bottom:10px">Seu código de convite</small>
+      <div class="invite-code" id="myInviteCode">CARREGANDO...</div>
+      <button class="copy-invite" onclick="copyInviteCode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copiar código
+      </button>
+    </div>
+
+    <div class="progress-info">
+      <div class="progress-label">
+        <span>Progresso</span>
+        <b><span id="inviteCount">0</span>/5</b>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="inviteProgress"></div>
+      </div>
+      <p class="progress-hint">
+        Quando <b>5 amigos</b> criarem conta com seu código, você ganha <b>Premium grátis por 30 dias</b>.
+      </p>
+    </div>
+
+    <button class="btn-cancel" style="width:100%" onclick="closeInvite()">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL CONFIGURAÇÕES -->
+<div class="modal-bg" id="modalSettings">
+  <div class="modal">
+    <h3 style="margin-bottom:18px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Configurações
+    </h3>
+
+    <div class="settings-section">
+      <div class="settings-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Segurança
+      </div>
+      <button class="settings-btn" id="stgChangePass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        Alterar senha
+      </button>
+      <button class="settings-btn" id="stgResetPass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+        Redefinir por e-mail
+      </button>
+    </div>
+
+    <div id="changePassSection" style="display:none">
+      <div class="settings-section">
+        <label>Senha atual</label>
+        <input type="password" id="stgCurrentPass" placeholder="Digite a senha atual">
+        <label>Nova senha</label>
+        <input type="password" id="stgNewPass" placeholder="Mínimo 6 caracteres">
+        <label>Confirmar nova senha</label>
+        <input type="password" id="stgConfirmPass" placeholder="Repita a nova senha">
+        <p class="err" id="stgPassErr"></p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="hideChangePass()">Cancelar</button>
+          <button class="btn-save" onclick="doChangePass()">Salvar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        Zona de perigo
+      </div>
+      <button class="settings-btn danger" id="stgDeleteAccount">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Deletar minha conta
+      </button>
+      <p class="settings-note">Isso vai apagar permanentemente sua conta, todos os chats e dados. Essa ação não pode ser desfeita.</p>
+    </div>
+
+    <div id="deleteSection" style="display:none">
+      <div class="settings-section">
+        <div class="warn-box">
+          <p><b>Atenção:</b> você está prestes a deletar sua conta permanentemente. Todos os seus chats, histórico e dados serão removidos. Essa ação é irreversível.</p>
+        </div>
+        <label>Digite DELETAR para confirmar</label>
+        <input type="text" id="deleteConfirm" class="confirm-input" placeholder="DELETAR" autocomplete="off">
+        <p class="err" id="stgDeleteErr"></p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="hideDeleteSection()">Cancelar</button>
+          <button class="btn-danger" id="stgDeleteConfirmBtn" onclick="doDeleteAccount()" disabled>Deletar conta</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closeSettings()">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL LIMITE -->
 <div class="modal-bg" id="modalLimit">
   <div class="modal" style="max-width:380px">
     <div class="limit-icon">
@@ -559,7 +736,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { 
   getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   signInWithPopup, signInWithRedirect, getRedirectResult,
-  GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile 
+  GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile,
+  updatePassword, sendPasswordResetEmail, deleteUser,
+  EmailAuthProvider, reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -591,7 +770,7 @@ const PIX_KEY='sampteken@gmail.com';
 const LIMITS={imgAnalysis:5,transcribe:20,imageGen:6,textChat:100};
 const LS={lim:'exlim'};
 
-var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null};
+var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0};
 
 var M={
  normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.'},
@@ -642,24 +821,15 @@ function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');cle
 function showLoading(txt){$('loadingText').textContent=txt||'Carregando...';$('loadingOverlay').classList.add('on')}
 function hideLoading(){$('loadingOverlay').classList.remove('on')}
 
-function showLimitModal(){
-  $('limitCount').textContent=limiteBase('imageGen');
-  $('modalLimit').classList.add('on');
-}
+function showLimitModal(){$('limitCount').textContent=limiteBase('imageGen');$('modalLimit').classList.add('on')}
 window.closeLimitModal=function(){$('modalLimit').classList.remove('on')};
 
 function applyPlano(){
   var btn=$('planBtn'),title=$('planBtnTitle'),sub=$('planBtnSub'),av=$('av');
   if(S.plano==='premium'){
-    btn.classList.add('premium');
-    title.textContent='Premium Ativo';
-    sub.textContent='Limites dobrados';
-    av.classList.add('premium');
+    btn.classList.add('premium');title.textContent='Premium Ativo';sub.textContent='Limites dobrados';av.classList.add('premium');
   }else{
-    btn.classList.remove('premium');
-    title.textContent='Virar Premium';
-    sub.textContent='Dobre todos os limites';
-    av.classList.remove('premium');
+    btn.classList.remove('premium');title.textContent='Virar Premium';sub.textContent='Dobre todos os limites';av.classList.remove('premium');
   }
   updateBadges();
 }
@@ -672,34 +842,49 @@ async function loadPlano(){
     applyPlano();
     onValue(ref(db,'users/'+S.user.uid+'/plano'),function(s){
       var v=s.exists()?s.val():'free';
-      if(v!==S.plano){
-        S.plano=v;
-        applyPlano();
-        if(v==='premium')toast('Plano Premium ativado!');
-      }
+      if(v!==S.plano){S.plano=v;applyPlano();if(v==='premium')toast('Plano Premium ativado!');}
     });
   }catch(e){console.log('plano',e)}
 }
 
+async function loadInvite(){
+  if(!S.user)return;
+  try{
+    var snap=await get(ref(db,'users/'+S.user.uid+'/codigoConvite'));
+    if(snap.exists())S.inviteCode=snap.val();
+    var cnt=await get(ref(db,'users/'+S.user.uid+'/convitesFeitos'));
+    S.inviteCount=cnt.exists()?cnt.val():0;
+    var sub=$('inviteBtnSub');
+    if(sub)sub.textContent=S.inviteCount+'/5 convites';
+    onValue(ref(db,'users/'+S.user.uid+'/convitesFeitos'),function(s){
+      S.inviteCount=s.exists()?s.val():0;
+      if(sub)sub.textContent=S.inviteCount+'/5 convites';
+    });
+  }catch(e){console.log('invite',e)}
+}
+
+function openInvite(){
+  $('modalInvite').classList.add('on');
+  $('myInviteCode').textContent=S.inviteCode||'CARREGANDO...';
+  $('inviteCount').textContent=S.inviteCount;
+  var pct=Math.min(100,(S.inviteCount/5)*100);
+  $('inviteProgress').style.width=pct+'%';
+}
+window.closeInvite=function(){$('modalInvite').classList.remove('on')};
+window.copyInviteCode=function(){
+  if(navigator.clipboard)navigator.clipboard.writeText(S.inviteCode).then(function(){toast('Codigo copiado!')});
+};
+
 function openPay(){
   if(S.plano==='premium'){toast('Você já é Premium!');return;}
   $('modalPay').classList.add('on');
-  $('payContent').style.display='block';
-  $('paySuccess').style.display='none';
-  $('payErr').textContent='';
-  $('payName').value=S.user?S.user.name:'';
-  $('payEmail').value=S.user?S.user.email:'';
-  $('pixKeyText').textContent=PIX_KEY;
-  S.payAttachment=null;
-  $('payUploadArea').style.display='block';
-  $('payPreview').innerHTML='';
-  $('payFile').value='';
+  $('payContent').style.display='block';$('paySuccess').style.display='none';$('payErr').textContent='';
+  $('payName').value=S.user?S.user.name:'';$('payEmail').value=S.user?S.user.email:'';
+  $('pixKeyText').textContent=PIX_KEY;S.payAttachment=null;
+  $('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value='';
 }
 window.closePay=function(){$('modalPay').classList.remove('on')};
-
-window.copyPixKey=function(){
-  if(navigator.clipboard)navigator.clipboard.writeText(PIX_KEY).then(function(){toast('Chave PIX copiada!')});
-};
+window.copyPixKey=function(){if(navigator.clipboard)navigator.clipboard.writeText(PIX_KEY).then(function(){toast('Chave PIX copiada!')});};
 
 $('payFile').addEventListener('change',function(e){
   var file=e.target.files[0];if(!file)return;
@@ -712,74 +897,128 @@ $('payFile').addEventListener('change',function(e){
   };
   reader.readAsDataURL(file);
 });
-
-window.removePayFile=function(){
-  S.payAttachment=null;
-  $('payUploadArea').style.display='block';
-  $('payPreview').innerHTML='';
-  $('payFile').value='';
-};
+window.removePayFile=function(){$('payAttachment') ; S.payAttachment=null;$('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value='';};
 
 window.sendComprovante=async function(){
   var nome=$('payName').value.trim();
   var email=$('payEmail').value.trim();
   if(!nome){$('payErr').textContent='Digite seu nome';return}
   if(!S.payAttachment){$('payErr').textContent='Anexe o comprovante';return}
-
-  $('payErr').textContent='';
-  $('paySendBtn').disabled=true;
-  $('paySendBtn').textContent='Enviando...';
-
+  $('payErr').textContent='';$('paySendBtn').disabled=true;$('paySendBtn').textContent='Enviando...';
   try{
     var res=await fetch(RENDER_URL+'/comprovante',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({uid:S.user.uid,nome:nome,email:email,imagemBase64:S.payAttachment.data})
     });
     var data=await res.json();
-    if(data.ok){
-      $('payContent').style.display='none';
-      $('paySuccess').style.display='block';
-    }else{
-      $('payErr').textContent=data.error||'Erro ao enviar';
-    }
-  }catch(e){
-    $('payErr').textContent='Erro de conexão. Tente de novo em 1 min.';
-  }
-  $('paySendBtn').disabled=false;
-  $('paySendBtn').textContent='Enviar comprovante';
+    if(data.ok){$('payContent').style.display='none';$('paySuccess').style.display='block';}
+    else{$('payErr').textContent=data.error||'Erro ao enviar';}
+  }catch(e){$('payErr').textContent='Erro de conexão. Tente de novo em 1 min.';}
+  $('paySendBtn').disabled=false;$('paySendBtn').textContent='Enviar comprovante';
 };
 
-function openHtmlPreview(code,title){
-  S.previewCode=code;
-  $('prevTitleText').textContent=title||'Preview HTML';
-  $('prevFrame').srcdoc=code;
-  $('htmlPreview').classList.add('on');
+// ========== SETTINGS ==========
+function openSettings(){
+  $('modalSettings').classList.add('on');
+  hideChangePass();
+  hideDeleteSection();
+  var isGoogle = S.user && auth.currentUser && auth.currentUser.providerData.some(function(p){return p.providerId==='google.com'});
+  $('stgChangePass').style.display=isGoogle?'none':'flex';
 }
-function closeHtmlPreview(){
-  $('htmlPreview').classList.remove('on');
-  $('prevFrame').srcdoc='';
-}
+window.closeSettings=function(){$('modalSettings').classList.remove('on')};
+
+$('stgChangePass').addEventListener('click',function(){
+  $('changePassSection').style.display='block';
+  $('stgCurrentPass').value='';$('stgNewPass').value='';$('stgConfirmPass').value='';$('stgPassErr').textContent='';
+});
+window.hideChangePass=function(){$('changePassSection').style.display='none'};
+
+$('stgResetPass').addEventListener('click',async function(){
+  if(!S.user||!S.user.email)return;
+  try{
+    await sendPasswordResetEmail(auth,S.user.email);
+    toast('Link enviado para '+S.user.email);
+  }catch(e){toast('Erro: '+e.message)}
+});
+
+window.doChangePass=async function(){
+  var cur=$('stgCurrentPass').value;
+  var nova=$('stgNewPass').value;
+  var conf=$('stgConfirmPass').value;
+  $('stgPassErr').textContent='';
+  if(!cur||!nova||!conf){$('stgPassErr').textContent='Preencha todos os campos';return}
+  if(nova.length<6){$('stgPassErr').textContent='Nova senha precisa ter 6+ caracteres';return}
+  if(nova!==conf){$('stgPassErr').textContent='As senhas não coincidem';return}
+  try{
+    var user=auth.currentUser;
+    var cred=EmailAuthProvider.credential(user.email,cur);
+    await reauthenticateWithCredential(user,cred);
+    await updatePassword(user,nova);
+    toast('Senha alterada com sucesso!');
+    hideChangePass();
+  }catch(e){
+    var msg=e.code||e.message;
+    if(msg.indexOf('wrong-password')>=0||msg.indexOf('invalid-credential')>=0)msg='Senha atual incorreta';
+    $('stgPassErr').textContent=msg;
+  }
+};
+
+$('stgDeleteAccount').addEventListener('click',function(){
+  $('deleteSection').style.display='block';
+  $('deleteConfirm').value='';
+  $('stgDeleteErr').textContent='';
+  $('stgDeleteConfirmBtn').disabled=true;
+  $('deleteConfirm').focus();
+});
+window.hideDeleteSection=function(){$('deleteSection').style.display='none'};
+
+$('deleteConfirm').addEventListener('input',function(e){
+  $('stgDeleteConfirmBtn').disabled = e.target.value.trim()!=='DELETAR';
+});
+
+window.doDeleteAccount=async function(){
+  if($('deleteConfirm').value.trim()!=='DELETAR')return;
+  $('stgDeleteErr').textContent='';
+  $('stgDeleteConfirmBtn').disabled=true;
+  $('stgDeleteConfirmBtn').textContent='Deletando...';
+  try{
+    var user=auth.currentUser;
+    if(!user)throw new Error('Não autenticado');
+    var myUid=user.uid;
+    var myEmail=user.email;
+    // Apaga chats
+    try{ await remove(ref(db,'users/'+myUid+'/chats')); }catch(e){console.log('del chats',e)}
+    // Apaga codigo de convite do indice
+    try{
+      var codeSnap=await get(ref(db,'users/'+myUid+'/codigoConvite'));
+      if(codeSnap.exists()) await remove(ref(db,'convites/'+codeSnap.val()));
+    }catch(e){console.log('del code',e)}
+    // Apaga perfil
+    try{ await remove(ref(db,'users/'+myUid)); }catch(e){console.log('del user',e)}
+    // Apaga do Auth
+    await deleteUser(user);
+    toast('Conta deletada. Até a próxima!');
+    setTimeout(function(){location.reload()},1500);
+  }catch(e){
+    var msg=e.code||e.message;
+    if(msg.indexOf('requires-recent-login')>=0)msg='Faça login novamente antes de deletar (por segurança)';
+    $('stgDeleteErr').textContent=msg;
+    $('stgDeleteConfirmBtn').disabled=false;
+    $('stgDeleteConfirmBtn').textContent='Deletar conta';
+  }
+};
+
+function openHtmlPreview(code,title){S.previewCode=code;$('prevTitleText').textContent=title||'Preview HTML';$('prevFrame').srcdoc=code;$('htmlPreview').classList.add('on');}
+function closeHtmlPreview(){$('htmlPreview').classList.remove('on');$('prevFrame').srcdoc='';}
 $('btnClosePreview').addEventListener('click',closeHtmlPreview);
 $('btnReloadPreview').addEventListener('click',function(){if(S.previewCode)$('prevFrame').srcdoc=S.previewCode});
-$('btnOpenNewTab').addEventListener('click',function(){
-  if(!S.previewCode)return;
-  var w=window.open('','_blank');
-  w.document.open();w.document.write(S.previewCode);w.document.close();
-});
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'&&$('htmlPreview').classList.contains('on'))closeHtmlPreview();
-});
+$('btnOpenNewTab').addEventListener('click',function(){if(!S.previewCode)return;var w=window.open('','_blank');w.document.open();w.document.write(S.previewCode);w.document.close();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('htmlPreview').classList.contains('on'))closeHtmlPreview();});
 
 function toggleInviteField(){
   var f=$('inviteField');
-  if(f.style.display==='none'||f.style.display===''){
-    f.style.display='block';
-    $('btnInvite').textContent='Ocultar código';
-  }else{
-    f.style.display='none';
-    $('btnInvite').textContent='Tenho um código de convite';
-  }
+  if(f.style.display==='none'||f.style.display===''){f.style.display='block';$('btnInvite').textContent='Ocultar código';}
+  else{f.style.display='none';$('btnInvite').textContent='Tenho um código de convite';}
 }
 window.toggleInviteField=toggleInviteField;
 
@@ -806,42 +1045,30 @@ $('btnEmail').addEventListener('click',async function(){
   try{
     if(S.authMode==='signup'){
       if(!name){$('authErr').textContent='Digite seu nome';$('btnEmail').disabled=false;hideLoading();return}
-      
       var codigoConvite=($('lc')?$('lc').value.trim().toUpperCase():'');
       var quemConvidou=null;
-      
       if(codigoConvite){
         showLoading('Validando convite...');
         try{
           var invSnap=await get(ref(db,'convites/'+codigoConvite));
           if(invSnap.exists()){quemConvidou=invSnap.val().uid;}
-          else{
-            $('authErr').textContent='Código de convite inválido';
-            $('btnEmail').disabled=false;
-            hideLoading();
-            return;
-          }
+          else{$('authErr').textContent='Código de convite inválido';$('btnEmail').disabled=false;hideLoading();return;}
         }catch(e){console.log('convite',e);}
       }
-      
       var cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
-      
       var meuCodigo='EXILED-'+cred.user.uid.slice(0,6).toUpperCase();
-      
       await set(ref(db,'users/'+cred.user.uid+'/profile'),{name:name,email:email,createdAt:Date.now()});
       await set(ref(db,'users/'+cred.user.uid+'/plano'),'free');
       await set(ref(db,'users/'+cred.user.uid+'/codigoConvite'),meuCodigo);
       await set(ref(db,'users/'+cred.user.uid+'/convitesFeitos'),0);
       await set(ref(db,'users/'+cred.user.uid+'/convitesRecompensados'),false);
       await set(ref(db,'convites/'+meuCodigo),{uid:cred.user.uid});
-      
       if(quemConvidou){
         var countSnap=await get(ref(db,'users/'+quemConvidou+'/convitesFeitos'));
         var atual=countSnap.exists()?countSnap.val():0;
         var novo=atual+1;
         await set(ref(db,'users/'+quemConvidou+'/convitesFeitos'),novo);
-        
         var jaRec=await get(ref(db,'users/'+quemConvidou+'/convitesRecompensados'));
         if(novo>=5&&(!jaRec.exists()||!jaRec.val())){
           await set(ref(db,'users/'+quemConvidou+'/plano'),'premium');
@@ -876,16 +1103,11 @@ $('btnGoogle').addEventListener('click',async function(){
     else await signInWithPopup(auth,provider);
   }catch(e){
     hideLoading();
-    if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request'&&e.code!=='auth/redirect-cancelled-by-user'){
-      $('authErr').textContent=e.code||e.message;
-    }
+    if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request'&&e.code!=='auth/redirect-cancelled-by-user'){$('authErr').textContent=e.code||e.message;}
   }
 });
 
-getRedirectResult(auth).then(function(result){
-  if(result&&result.user)console.log('Redirect OK');
-  hideLoading();
-}).catch(function(e){hideLoading()});
+getRedirectResult(auth).then(function(result){if(result&&result.user)console.log('Redirect OK');hideLoading();}).catch(function(e){hideLoading()});
 
 onAuthStateChanged(auth,async function(user){
   if(user){
@@ -902,8 +1124,7 @@ onAuthStateChanged(auth,async function(user){
         await set(ref(db,'users/'+user.uid+'/convitesRecompensados'),false);
         await set(ref(db,'convites/'+meuCod),{uid:user.uid});
       }else{
-        var p=snap.val();
-        if(p.name)S.user.name=p.name;
+        var p=snap.val();if(p.name)S.user.name=p.name;
       }
     }catch(e){console.log('profile',e)}
     try{
@@ -911,6 +1132,7 @@ onAuthStateChanged(auth,async function(user){
       if(csnap.exists())S.chats=csnap.val();
     }catch(e){console.log('chats',e)}
     await loadPlano();
+    await loadInvite();
     hideLoading();
     enterApp();
   }else{
@@ -923,6 +1145,8 @@ onAuthStateChanged(auth,async function(user){
 function bindEvents(){
   $('nn').addEventListener('click',newChat);
   $('lo').addEventListener('click',logout);
+  $('stg').addEventListener('click',openSettings);
+  $('inviteBtn').addEventListener('click',openInvite);
   $('se').addEventListener('click',onSendClick);
   $('tg').addEventListener('click',function(){$('sb').classList.toggle('op')});
   $('btnImg').addEventListener('click',onImgClick);
@@ -975,10 +1199,7 @@ function delChat(id,e){
   if(S.busy&&S.cur===id)stopResponse();
   delete S.chats[id];
   if(S.user)try{remove(ref(db,'users/'+S.user.uid+'/chats/'+id))}catch(x){}
-  if(S.cur===id){
-    var k=Object.keys(S.chats);
-    if(k.length)S.cur=k[0];else{newChat();return}
-  }
+  if(S.cur===id){var k=Object.keys(S.chats);if(k.length)S.cur=k[0];else{newChat();return}}
   renderList();renderChat();
 }
 
@@ -1082,10 +1303,7 @@ function onImgClick(){
 }
 
 function onGenImgClick(){
-  if(!canUse('imageGen')){
-    showLimitModal();
-    return;
-  }
+  if(!canUse('imageGen')){showLimitModal();return;}
   var m='image';
   if(S.busy)stopResponse();
   S.mode=m;$('cs').textContent=M[m].sub;updateModes();updatePlaceholder();$('ui').focus();
