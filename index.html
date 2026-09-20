@@ -14,11 +14,9 @@ input,textarea{font-family:inherit}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:#3a3a3a}
 
-/* LOGIN */
 #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#000;padding:20px;overflow-y:auto}
-.box{width:100%;max-width:400px;padding:40px 32px;background:var(--bg1);border:1px solid var(--bd);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.box{width:100%;max-width:400px;padding:40px 32px;background:var(--bg1);border:1px solid var(--bd);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.8);margin:auto}
 .logo{width:70px;height:70px;margin:0 auto 20px;background:var(--grad);border-radius:18px;display:flex;align-items:center;justify-content:center}
 .logo svg{width:36px;height:36px;stroke:#000;stroke-width:2.2;fill:none}
 h1{text-align:center;font-size:24px;margin-bottom:6px;font-weight:800}
@@ -32,14 +30,13 @@ input:focus{border-color:#555;background:var(--bg3)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .btn-google{background:#fff;color:#000;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
 .btn-google svg{width:18px;height:18px}
-.btn-link{background:transparent;color:var(--dim);font-size:12.5px;font-weight:500;padding:8px;margin-top:4px}
+.btn-link{background:transparent;color:var(--dim);font-size:12.5px;font-weight:500;padding:8px;margin-top:4px;width:100%}
 .btn-link:hover{color:#fff}
 .divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--dim2);font-size:11px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bd)}
 .hint{text-align:center;color:var(--dim2);font-size:11px;margin-top:14px;line-height:1.6}
 .err{color:var(--red);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
 
-/* APP */
 #app{display:none;width:100%;height:100%;height:100dvh}
 #app.on{display:flex}
 .sb{width:280px;background:var(--bg1);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;transition:margin-left .3s ease}
@@ -185,12 +182,18 @@ input:focus{border-color:#555;background:var(--bg3)}
 .modal-actions{display:flex;gap:8px;margin-top:16px}
 .modal-actions button{flex:1;padding:11px;border-radius:10px;font-weight:600;font-size:13px;transition:.2s}
 .btn-cancel{background:var(--bg3);color:#fff;border:1px solid var(--bd2)}
-.btn-cancel:hover{background:var(--bg4)}
+.btn-cancel:hover{background:#222}
 .btn-save{background:var(--grad);color:#000}
 .btn-save:hover{background:var(--gradh)}
 
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg1);border:1px solid var(--bd2);color:#fff;padding:10px 18px;border-radius:10px;font-size:12.5px;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
+
+.loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.on{display:flex}
+.spinner{width:40px;height:40px;border:3px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay p{color:var(--dim);font-size:13px}
 
 .mo{display:none}
 @media(max-width:900px){
@@ -233,8 +236,13 @@ input:focus{border-color:#555;background:var(--bg3)}
       Continuar com Google
     </button>
 
-    <p class="hint">Ao entrar você concorda em usar a IA com responsabilidade.</p>
+    <p class="hint">Seus dados são salvos com segurança no Firebase.</p>
   </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p id="loadingText">Entrando...</p>
 </div>
 
 <div id="app">
@@ -243,7 +251,7 @@ input:focus{border-color:#555;background:var(--bg3)}
       <div class="sbl"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
       <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
     </div>
-    <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
+    <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
     <div class="cl" id="cl"></div>
     <div class="sbf">
       <div class="av" id="av">?</div>
@@ -306,10 +314,20 @@ input:focus{border-color:#555;background:var(--bg3)}
 <div class="toast" id="toast"></div>
 
 <script type="module">
-// ========== FIREBASE ==========
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult,
+  GoogleAuthProvider, 
+  onAuthStateChanged, 
+  signOut, 
+  updateProfile 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB6XfFptak35pvbxmaxzbHq-kwSoo_XwUc",
@@ -325,7 +343,6 @@ const fapp = initializeApp(firebaseConfig);
 const auth = getAuth(fapp);
 const db = getDatabase(fapp);
 
-// ========== CONFIG ==========
 const GROQ_KEY='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';
 const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 const GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
@@ -350,7 +367,6 @@ var M={
 var SEND_ICON='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
 var STOP_ICON='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
 
-// ========== HELPERS ==========
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function today(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
@@ -383,6 +399,8 @@ function updateBadges(){
   if(bm)bm.textContent=remaining('transcribe');
 }
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on')},3000)}
+function showLoading(txt){$('loadingText').textContent=txt||'Carregando...';$('loadingOverlay').classList.add('on')}
+function hideLoading(){$('loadingOverlay').classList.remove('on')}
 
 // ========== AUTH ==========
 $('toggleMode').addEventListener('click',function(){
@@ -402,9 +420,10 @@ $('btnEmail').addEventListener('click',async function(){
   if(!email||!pass){$('authErr').textContent='Preencha email e senha';return}
   if(pass.length<6){$('authErr').textContent='Senha precisa ter 6+ caracteres';return}
   $('btnEmail').disabled=true;
+  showLoading(S.authMode==='signup'?'Criando conta...':'Entrando...');
   try{
     if(S.authMode==='signup'){
-      if(!name){$('authErr').textContent='Digite seu nome';$('btnEmail').disabled=false;return}
+      if(!name){$('authErr').textContent='Digite seu nome';$('btnEmail').disabled=false;hideLoading();return}
       var cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
       await set(ref(db,'users/'+cred.user.uid+'/profile'),{name:name,email:email,createdAt:Date.now()});
@@ -412,11 +431,13 @@ $('btnEmail').addEventListener('click',async function(){
       await signInWithEmailAndPassword(auth,email,pass);
     }
   }catch(e){
+    hideLoading();
     var msg=e.code||e.message;
     if(msg.indexOf('email-already-in-use')>=0)msg='Esse email já está cadastrado';
     else if(msg.indexOf('invalid-credential')>=0||msg.indexOf('wrong-password')>=0)msg='Email ou senha errados';
     else if(msg.indexOf('user-not-found')>=0)msg='Conta não existe';
     else if(msg.indexOf('invalid-email')>=0)msg='Email inválido';
+    else if(msg.indexOf('network-request-failed')>=0)msg='Sem conexão com a internet';
     $('authErr').textContent=msg;
   }
   $('btnEmail').disabled=false;
@@ -424,38 +445,71 @@ $('btnEmail').addEventListener('click',async function(){
 
 $('btnGoogle').addEventListener('click',async function(){
   $('authErr').textContent='';
+  var provider=new GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
   try{
-    var provider=new GoogleAuthProvider();
-    provider.setCustomParameters({prompt:'select_account'});
-    await signInWithPopup(auth,provider);
+    if(isMobile){
+      showLoading('Abrindo Google...');
+      await signInWithRedirect(auth,provider);
+      // redirect sai da página, não precisa esconder loading
+    }else{
+      showLoading('Abrindo Google...');
+      await signInWithPopup(auth,provider);
+    }
   }catch(e){
-    if(e.code!=='auth/popup-closed-by-user')$('authErr').textContent=e.code||e.message;
+    hideLoading();
+    if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request'&&e.code!=='auth/redirect-cancelled-by-user'){
+      $('authErr').textContent=e.code||e.message;
+    }
   }
 });
 
-// ========== AUTH STATE ==========
+// Captura resultado do redirect (mobile)
+getRedirectResult(auth).then(function(result){
+  if(result&&result.user){
+    console.log('Redirect login OK:',result.user.email);
+  }
+  hideLoading();
+}).catch(function(e){
+  hideLoading();
+  console.error('Redirect error:',e);
+  if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/redirect-cancelled-by-user'){
+    $('authErr').textContent=e.code||e.message;
+  }
+});
+
 onAuthStateChanged(auth,async function(user){
   if(user){
-    S.user={uid:user.uid,name:user.displayName||user.email.split('@')[0],email:user.email,photo:user.photoURL||''};
+    S.user={
+      uid:user.uid,
+      name:user.displayName||user.email.split('@')[0],
+      email:user.email,
+      photo:user.photoURL||''
+    };
+    showLoading('Carregando perfil...');
     try{
       var snap=await get(ref(db,'users/'+user.uid+'/profile'));
       if(!snap.exists()){
         await set(ref(db,'users/'+user.uid+'/profile'),{name:S.user.name,email:S.user.email,createdAt:Date.now()});
+      }else{
+        var p=snap.val();
+        if(p.name)S.user.name=p.name;
       }
-    }catch(e){console.log('profile',e)}
-    // carrega chats do Firebase
+    }catch(e){console.log('profile error',e)}
     try{
       var csnap=await get(ref(db,'users/'+user.uid+'/chats'));
       if(csnap.exists())S.chats=csnap.val();
-    }catch(e){console.log('chats',e)}
+    }catch(e){console.log('chats error',e)}
+    hideLoading();
     enterApp();
   }else{
+    hideLoading();
     $('app').classList.remove('on');
     $('login').style.display='flex';
   }
 });
 
-// ========== INIT ==========
 function bindEvents(){
   $('nn').addEventListener('click',newChat);
   $('lo').addEventListener('click',logout);
@@ -480,23 +534,20 @@ function enterApp(){
   }
   if(!S.cur||!S.chats[S.cur])newChat();
   else{renderList();renderChat()}
-  updateModes();
-  updatePlaceholder();
-  updateBadges();
+  updateModes();updatePlaceholder();updateBadges();
 }
 
 function logout(){
   if(!confirm('Sair da conta?'))return;
-  signOut(auth).then(function(){location.reload()});
+  showLoading('Saindo...');
+  signOut(auth).then(function(){location.reload()}).catch(function(){hideLoading()});
 }
 
-// ========== CHATS ==========
 function newChat(){
   var id='c_'+Date.now();
   S.chats[id]={id:id,title:'Novo Chat',messages:[],t:Date.now()};
   S.cur=id;
-  save();
-  renderList();renderChat();
+  save();renderList();renderChat();
 }
 
 function save(){
@@ -506,8 +557,7 @@ function save(){
 
 function switchChat(id){
   if(S.busy)stopResponse();
-  S.cur=id;
-  renderList();renderChat();
+  S.cur=id;renderList();renderChat();
   if(innerWidth<=900)$('sb').classList.remove('op');
 }
 
@@ -516,7 +566,7 @@ function delChat(id,e){
   if(!confirm('Deletar?'))return;
   if(S.busy&&S.cur===id)stopResponse();
   delete S.chats[id];
-  if(S.user)remove(ref(db,'users/'+S.user.uid+'/chats/'+id));
+  if(S.user)try{remove(ref(db,'users/'+S.user.uid+'/chats/'+id))}catch(x){}
   if(S.cur===id){
     var k=Object.keys(S.chats);
     if(k.length)S.cur=k[0];else{newChat();return}
@@ -560,7 +610,6 @@ function welcome(){
   cin.querySelectorAll('.sgt').forEach(function(el){el.onclick=function(){$('ui').value=el.getAttribute('data-q');send()}});
 }
 
-// ========== MESSAGES ==========
 function addMsg(role,content,anim){
   if(anim===undefined)anim=true;
   var cin=$('cin');
@@ -596,7 +645,6 @@ function addTyping(){
 function rmTyping(){var el=$('tpy');if(el)el.remove()}
 function scrollB(){var a=$('ca');requestAnimationFrame(function(){a.scrollTop=a.scrollHeight})}
 
-// ========== SEND ==========
 function onSendClick(){if(S.busy)stopResponse();else send()}
 
 function stopResponse(){
@@ -619,6 +667,24 @@ function updatePlaceholder(){
 }
 
 function clearAttachment(){S.attachment=null;$('previewWrap').innerHTML='';updatePlaceholder()}
+
+function onImgClick(){
+  if(!canUse('imgAnalysis')){toast('Limite diário de análise atingido');return}
+  $('fileInput').click();
+}
+
+function onFileSelected(e){
+  var file=e.target.files[0];if(!file)return;
+  if(file.size>20*1024*1024){toast('Imagem muito grande (máx 20MB)');return}
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    S.attachment={data:ev.target.result,name:file.name,type:file.type};
+    $('previewWrap').innerHTML='<div class="preview"><img src="'+S.attachment.data+'"><span>'+esc(S.attachment.name)+'</span><button onclick="clearAttachment()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+    updatePlaceholder();$('ui').focus();
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
 
 function send(){
   if(S.busy)return;
@@ -675,7 +741,6 @@ function send(){
     .then(function(){S.abort=null;S.busy=false;setBtnState(false);inp.focus()});
 }
 
-// ========== IMAGE ANALYSIS ==========
 function analyzeImage(prompt,att,c){
   var ctrl=new AbortController();S.abort=ctrl;
   var history=c.messages.slice(0,-1).map(function(x){return {role:x.role,content:x.content}});
@@ -699,7 +764,6 @@ function analyzeImage(prompt,att,c){
     .then(function(){S.abort=null;S.busy=false;setBtnState(false);$('ui').focus()});
 }
 
-// ========== IMAGE GEN ==========
 function generateAgnesImage(prompt,c){
   var ctrl=new AbortController();S.abort=ctrl;
   fetch(AGNES_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+AGNES_KEY},body:JSON.stringify({model:'agnes-image-2.0-flash',prompt:prompt,size:'1024x1024',extra_body:{response_format:'url'}}),signal:ctrl.signal})
@@ -731,7 +795,6 @@ window.copyImgUrl=function(btn){
 };
 window.clearAttachment=clearAttachment;
 
-// ========== MIC ==========
 function onMicClick(){
   if(S.recording){stopRecording();return}
   if(!canUse('transcribe')){toast('Limite diário de transcrição atingido');return}
@@ -785,7 +848,6 @@ async function transcribeAudio(){
   finally{inp.disabled=false;updatePlaceholder();inp.focus()}
 }
 
-// ========== TURBINAR ==========
 function onTurbinarClick(){
   var text=$('ui').value.trim();
   if(!text){toast('Escreva algo primeiro pra turbinar');return}
@@ -806,7 +868,6 @@ window.useTurbo=function(){
   $('ui').style.height='auto';$('ui').style.height=Math.min($('ui').scrollHeight,120)+'px';$('ui').focus();
 };
 
-// ========== MD ==========
 function md(text){
   var html=esc(text);var cb=[];
   html=html.replace(/```(\w*)\n([\s\S]*?)```/g,function(m,lang,code){var i=cb.length;cb.push({lang:lang||'code',code:code.trim()});return '\u0000C'+i+'\u0000'});
@@ -859,7 +920,6 @@ document.addEventListener('click',function(e){
   });
 });
 
-// ========== MODES ==========
 function bindModes(){
   document.querySelectorAll('.mb').forEach(function(b){
     b.addEventListener('click',function(){
