@@ -17,8 +17,8 @@ input,textarea{font-family:inherit}
 ::-webkit-scrollbar-thumb:hover{background:#3a3a3a}
 
 /* LOGIN */
-#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#000;padding:20px}
-.box{width:100%;max-width:380px;padding:40px 32px;background:var(--bg1);border:1px solid var(--bd);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#000;padding:20px;overflow-y:auto}
+.box{width:100%;max-width:400px;padding:40px 32px;background:var(--bg1);border:1px solid var(--bd);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.8)}
 .logo{width:70px;height:70px;margin:0 auto 20px;background:var(--grad);border-radius:18px;display:flex;align-items:center;justify-content:center}
 .logo svg{width:36px;height:36px;stroke:#000;stroke-width:2.2;fill:none}
 h1{text-align:center;font-size:24px;margin-bottom:6px;font-weight:800}
@@ -27,9 +27,17 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
 input{width:100%;padding:12px 14px;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;color:#fff;font-size:14px;outline:none;margin-bottom:14px}
 input:focus{border-color:#555;background:var(--bg3)}
-.btn{width:100%;padding:13px;border-radius:10px;background:var(--grad);color:#000;font-weight:700;font-size:14px;transition:all .2s}
+.btn{width:100%;padding:13px;border-radius:10px;background:var(--grad);color:#000;font-weight:700;font-size:14px;transition:all .2s;margin-bottom:10px}
 .btn:hover{background:var(--gradh);transform:translateY(-1px)}
-.hint{text-align:center;color:var(--dim2);font-size:11px;margin-top:16px;line-height:1.6}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-google{background:#fff;color:#000;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
+.btn-google svg{width:18px;height:18px}
+.btn-link{background:transparent;color:var(--dim);font-size:12.5px;font-weight:500;padding:8px;margin-top:4px}
+.btn-link:hover{color:#fff}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--dim2);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.hint{text-align:center;color:var(--dim2);font-size:11px;margin-top:14px;line-height:1.6}
+.err{color:var(--red);font-size:12px;text-align:center;margin-top:10px;min-height:16px}
 
 /* APP */
 #app{display:none;width:100%;height:100%;height:100dvh}
@@ -57,7 +65,8 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ci .del svg{width:12px;height:12px}
 .ci .del:hover svg{stroke:var(--red)}
 .sbf{padding:14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:12px}
-.av{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:13px;flex-shrink:0}
+.av{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
 .ui{flex:1;overflow:hidden}
 .ui b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ui small{color:var(--dim);font-size:10.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -157,7 +166,6 @@ input:focus{border-color:#555;background:var(--bg3)}
 .sb2.stop{background:linear-gradient(135deg,#ff6b6b,#cc2b2b)}
 .if{max-width:820px;margin:6px auto 0;text-align:center;font-size:10px;color:var(--dim2)}
 
-/* IMAGE PREVIEW */
 .preview{max-width:820px;margin:8px auto 0;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px;display:flex;align-items:center;gap:10px}
 .preview img{width:40px;height:40px;object-fit:cover;border-radius:6px}
 .preview span{flex:1;font-size:11px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -166,7 +174,6 @@ input:focus{border-color:#555;background:var(--bg3)}
 .preview button svg{width:12px;height:12px;stroke:var(--dim);stroke-width:2.5;fill:none}
 .preview button:hover svg{stroke:var(--red)}
 
-/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-bg.on{display:flex}
 .modal{width:100%;max-width:480px;background:var(--bg1);border:1px solid var(--bd2);border-radius:18px;padding:24px;animation:mi .3s ease;max-height:80vh;overflow-y:auto}
@@ -206,12 +213,27 @@ input:focus{border-color:#555;background:var(--bg3)}
     <div class="logo"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
     <h1>EXILED <span>AI</span></h1>
     <p class="sub">Entre para começar sua jornada</p>
-    <label>Nome</label>
-    <input type="text" id="ln" placeholder="Seu nome" autocomplete="off">
+
+    <div id="signupFields" style="display:none">
+      <label>Nome</label>
+      <input type="text" id="ln" placeholder="Seu nome" autocomplete="off">
+    </div>
     <label>E-mail</label>
     <input type="email" id="le" placeholder="voce@email.com" autocomplete="off">
-    <button class="btn" id="bl">Entrar no Exiled</button>
-    <p class="hint">Seus dados ficam salvos apenas neste navegador</p>
+    <label>Senha</label>
+    <input type="password" id="lp" placeholder="Mínimo 6 caracteres" autocomplete="off">
+    <button class="btn" id="btnEmail">Entrar</button>
+    <p class="err" id="authErr"></p>
+    <button class="btn-link" id="toggleMode">Não tem conta? Criar conta</button>
+
+    <div class="divider">ou</div>
+
+    <button class="btn btn-google" id="btnGoogle">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continuar com Google
+    </button>
+
+    <p class="hint">Ao entrar você concorda em usar a IA com responsabilidade.</p>
   </div>
 </div>
 
@@ -226,19 +248,19 @@ input:focus{border-color:#555;background:var(--bg3)}
     <div class="sbf">
       <div class="av" id="av">?</div>
       <div class="ui"><b id="un">User</b><small id="ue">email</small></div>
-      <button class="lb" id="lo"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      <button class="lb" id="lo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
     </div>
   </aside>
   <main class="mn">
     <div class="tb">
-      <button class="ib mo" id="tg"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <button class="ib mo" id="tg"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <div class="tt"><h3 id="ct">Novo Chat</h3><small id="cs">Pronto para ajudar</small></div>
       <div class="ms" id="ms">
-        <button class="mb on" data-m="normal"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Normal</span></button>
-        <button class="mb" data-m="code"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Código</span></button>
-        <button class="mb" data-m="fast"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Rápida</span></button>
-        <button class="mb" data-m="think"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 011.32-4.24 2.5 2.5 0 011.98-3A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 002.96-3.08 3 3 0 00.34-5.58 2.5 2.5 0 00-1.32-4.24 2.5 2.5 0 00-1.98-3A2.5 2.5 0 0014.5 2z"/></svg><span>Pensar</span></button>
-        <button class="mb" data-m="image"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Imagem</span></button>
+        <button class="mb on" data-m="normal"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Normal</span></button>
+        <button class="mb" data-m="code"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Código</span></button>
+        <button class="mb" data-m="fast"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Rápida</span></button>
+        <button class="mb" data-m="think"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44 2.5 2.5 0 01-2.96-3.08 3 3 0 01-.34-5.58 2.5 2.5 0 011.32-4.24 2.5 2.5 0 011.98-3A2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96.44 2.5 2.5 0 002.96-3.08 3 3 0 00.34-5.58 2.5 2.5 0 00-1.32-4.24 2.5 2.5 0 00-1.98-3A2.5 2.5 0 0014.5 2z"/></svg><span>Pensar</span></button>
+        <button class="mb" data-m="image"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Imagem</span></button>
       </div>
     </div>
     <div class="ca" id="ca"><div class="cin" id="cin"></div></div>
@@ -250,28 +272,27 @@ input:focus{border-color:#555;background:var(--bg3)}
         <textarea id="ui" placeholder="Pergunte qualquer coisa..." rows="1"></textarea>
         <div class="tools">
           <button class="tool-btn" id="btnImg" title="Analisar imagem">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             <span class="tool-badge" id="badgeImg">5</span>
           </button>
           <button class="tool-btn" id="btnMic" title="Gravar áudio">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
             <span class="tool-badge" id="badgeMic">20</span>
           </button>
           <button class="tool-btn" id="btnTurbinar" title="Turbinar prompt">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
           </button>
         </div>
-        <button class="sb2" id="se"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+        <button class="sb2" id="se"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
       </div>
       <p class="if">EXILED AI pode cometer erros. Limites diários por usuário.</p>
     </div>
   </main>
 </div>
 
-<!-- MODAL TURBINAR -->
 <div class="modal-bg" id="modalTurbo">
   <div class="modal">
-    <h3><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>Prompt Turbinado</h3>
+    <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>Prompt Turbinado</h3>
     <p>A IA reescreveu seu prompt com mais detalhes profissionais. Edite se quiser:</p>
     <textarea id="turboText"></textarea>
     <div class="modal-actions">
@@ -282,34 +303,41 @@ input:focus{border-color:#555;background:var(--bg3)}
 </div>
 
 <input type="file" id="fileInput" accept="image/*" style="display:none">
-
 <div class="toast" id="toast"></div>
 
-<script>
-(function(){
-'use strict';
+<script type="module">
+// ========== FIREBASE ==========
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/* ========== CONFIG ========== */
-var GROQ_KEY='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';
-var GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
-var GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
-var AGNES_KEY='sk-YHIGwJKI72lqvP0JBiIpdETWIM5qwdjt5Hq2zUq41A66pNf4';
-var AGNES_URL='https://apihub.agnes-ai.com/v1/images/generations';
-var VISION_MODEL='qwen/qwen3.6-27b';
-var STT_MODEL='whisper-large-v3-turbo';
-
-var LS={u:'exu',c:'exc',n:'exn',m:'exm',lim:'exlim'};
-
-/* ========== LIMITES ========== */
-var LIMITS={
-  imgAnalysis:5,
-  transcribe:20,
-  imageGen:15,
-  textChat:100
+const firebaseConfig = {
+  apiKey: "AIzaSyB6XfFptak35pvbxmaxzbHq-kwSoo_XwUc",
+  authDomain: "exiled-scripts.firebaseapp.com",
+  databaseURL: "https://exiled-scripts-default-rtdb.firebaseio.com",
+  projectId: "exiled-scripts",
+  storageBucket: "exiled-scripts.firebasestorage.app",
+  messagingSenderId: "194421147716",
+  appId: "1:194421147716:web:119bfcf91c5eb8e71c5411"
 };
 
-/* ========== STATE ========== */
-var S={user:null,chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[]};
+const fapp = initializeApp(firebaseConfig);
+const auth = getAuth(fapp);
+const db = getDatabase(fapp);
+
+// ========== CONFIG ==========
+const GROQ_KEY='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';
+const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
+const GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
+const AGNES_KEY='sk-YHIGwJKI72lqvP0JBiIpdETWIM5qwdjt5Hq2zUq41A66pNf4';
+const AGNES_URL='https://apihub.agnes-ai.com/v1/images/generations';
+const VISION_MODEL='meta-llama/llama-4-scout-17b-16e-instruct';
+const STT_MODEL='whisper-large-v3-turbo';
+
+const LIMITS={imgAnalysis:5,transcribe:20,imageGen:15,textChat:100};
+const LS={lim:'exlim'};
+
+var S={user:null,chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login'};
 
 var M={
  normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.'},
@@ -319,41 +347,28 @@ var M={
  image:{model:'agnes-image-2.0-flash',temp:0,sub:'Gerar imagens com IA',p:''}
 };
 
-var SEND_ICON='<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+var SEND_ICON='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
 var STOP_ICON='<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
 
-/* ========== HELPERS ========== */
+// ========== HELPERS ==========
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function today(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function uid(){return S.user?S.user.uid:'anon'}
 
 function getLimitStore(){
   try{
     var raw=localStorage.getItem(LS.lim);
     var store=raw?JSON.parse(raw):{};
-    var uid=S.user?S.user.email:'anon';
-    if(!store[uid]||store[uid].date!==today()){
-      store[uid]={date:today(),imgAnalysis:0,transcribe:0,imageGen:0,textChat:0};
+    if(!store[uid()]||store[uid()].date!==today()){
+      store[uid()]={date:today(),imgAnalysis:0,transcribe:0,imageGen:0,textChat:0};
     }
-    return {store:store,uid:uid};
-  }catch(e){
-    return {store:{},uid:'anon'};
-  }
+    return {store:store,uid:uid()};
+  }catch(e){return {store:{},uid:uid()}}
 }
-
-function saveLimitStore(store){
-  try{localStorage.setItem(LS.lim,JSON.stringify(store));}catch(e){}
-}
-
-function getUsage(key){
-  var s=getLimitStore();
-  return s.store[s.uid]?s.store[s.uid][key]||0:0;
-}
-
-function canUse(key){
-  return getUsage(key)<LIMITS[key];
-}
-
+function saveLimitStore(store){try{localStorage.setItem(LS.lim,JSON.stringify(store))}catch(e){}}
+function getUsage(key){var s=getLimitStore();return s.store[s.uid]?s.store[s.uid][key]||0:0}
+function canUse(key){return getUsage(key)<LIMITS[key]}
 function incUsage(key){
   var s=getLimitStore();
   if(!s.store[s.uid])s.store[s.uid]={date:today(),imgAnalysis:0,transcribe:0,imageGen:0,textChat:0};
@@ -361,116 +376,152 @@ function incUsage(key){
   saveLimitStore(s.store);
   updateBadges();
 }
-
-function remaining(key){
-  return Math.max(0,LIMITS[key]-getUsage(key));
-}
-
+function remaining(key){return Math.max(0,LIMITS[key]-getUsage(key))}
 function updateBadges(){
   var bi=$('badgeImg'),bm=$('badgeMic');
   if(bi)bi.textContent=remaining('imgAnalysis');
   if(bm)bm.textContent=remaining('transcribe');
 }
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on')},3000)}
 
-function toast(msg){
-  var t=$('toast');
-  t.textContent=msg;
-  t.classList.add('on');
-  clearTimeout(t._t);
-  t._t=setTimeout(function(){t.classList.remove('on')},3000);
-}
+// ========== AUTH ==========
+$('toggleMode').addEventListener('click',function(){
+  S.authMode=S.authMode==='login'?'signup':'login';
+  var isSignup=S.authMode==='signup';
+  $('signupFields').style.display=isSignup?'block':'none';
+  $('btnEmail').textContent=isSignup?'Criar conta':'Entrar';
+  $('toggleMode').textContent=isSignup?'Já tem conta? Entrar':'Não tem conta? Criar conta';
+  $('authErr').textContent='';
+});
 
-/* ========== INIT ========== */
-function init(){
+$('btnEmail').addEventListener('click',async function(){
+  var email=$('le').value.trim();
+  var pass=$('lp').value;
+  var name=$('ln')?$('ln').value.trim():'';
+  $('authErr').textContent='';
+  if(!email||!pass){$('authErr').textContent='Preencha email e senha';return}
+  if(pass.length<6){$('authErr').textContent='Senha precisa ter 6+ caracteres';return}
+  $('btnEmail').disabled=true;
   try{
-    var su=localStorage.getItem(LS.u);
-    var sc=localStorage.getItem(LS.c);
-    var sn=localStorage.getItem(LS.n);
-    var sm=localStorage.getItem(LS.m);
-    if(sc)S.chats=JSON.parse(sc);
-    if(sn)S.cur=sn;
-    if(sm&&M[sm])S.mode=sm;
-    if(su){S.user=JSON.parse(su);enterApp();}
-  }catch(e){console.log('init',e)}
-  bindEvents();
-}
+    if(S.authMode==='signup'){
+      if(!name){$('authErr').textContent='Digite seu nome';$('btnEmail').disabled=false;return}
+      var cred=await createUserWithEmailAndPassword(auth,email,pass);
+      await updateProfile(cred.user,{displayName:name});
+      await set(ref(db,'users/'+cred.user.uid+'/profile'),{name:name,email:email,createdAt:Date.now()});
+    }else{
+      await signInWithEmailAndPassword(auth,email,pass);
+    }
+  }catch(e){
+    var msg=e.code||e.message;
+    if(msg.indexOf('email-already-in-use')>=0)msg='Esse email já está cadastrado';
+    else if(msg.indexOf('invalid-credential')>=0||msg.indexOf('wrong-password')>=0)msg='Email ou senha errados';
+    else if(msg.indexOf('user-not-found')>=0)msg='Conta não existe';
+    else if(msg.indexOf('invalid-email')>=0)msg='Email inválido';
+    $('authErr').textContent=msg;
+  }
+  $('btnEmail').disabled=false;
+});
 
+$('btnGoogle').addEventListener('click',async function(){
+  $('authErr').textContent='';
+  try{
+    var provider=new GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'});
+    await signInWithPopup(auth,provider);
+  }catch(e){
+    if(e.code!=='auth/popup-closed-by-user')$('authErr').textContent=e.code||e.message;
+  }
+});
+
+// ========== AUTH STATE ==========
+onAuthStateChanged(auth,async function(user){
+  if(user){
+    S.user={uid:user.uid,name:user.displayName||user.email.split('@')[0],email:user.email,photo:user.photoURL||''};
+    try{
+      var snap=await get(ref(db,'users/'+user.uid+'/profile'));
+      if(!snap.exists()){
+        await set(ref(db,'users/'+user.uid+'/profile'),{name:S.user.name,email:S.user.email,createdAt:Date.now()});
+      }
+    }catch(e){console.log('profile',e)}
+    // carrega chats do Firebase
+    try{
+      var csnap=await get(ref(db,'users/'+user.uid+'/chats'));
+      if(csnap.exists())S.chats=csnap.val();
+    }catch(e){console.log('chats',e)}
+    enterApp();
+  }else{
+    $('app').classList.remove('on');
+    $('login').style.display='flex';
+  }
+});
+
+// ========== INIT ==========
 function bindEvents(){
-  $('bl').addEventListener('click',doLogin);
   $('nn').addEventListener('click',newChat);
   $('lo').addEventListener('click',logout);
   $('se').addEventListener('click',onSendClick);
-  $('tg').addEventListener('click',function(){ $('sb').classList.toggle('op'); });
+  $('tg').addEventListener('click',function(){$('sb').classList.toggle('op')});
   $('btnImg').addEventListener('click',onImgClick);
   $('btnMic').addEventListener('click',onMicClick);
   $('btnTurbinar').addEventListener('click',onTurbinarClick);
   $('fileInput').addEventListener('change',onFileSelected);
-  bindModes();
-  bindInput();
-}
-
-/* ========== LOGIN ========== */
-function doLogin(){
-  var n=$('ln').value.trim();
-  var e=$('le').value.trim();
-  if(!n||!e){toast('Preencha nome e email');return}
-  if(e.indexOf('@')<0){toast('Email inválido');return}
-  S.user={name:n,email:e};
-  try{localStorage.setItem(LS.u,JSON.stringify(S.user));}catch(x){}
-  enterApp();
+  bindModes();bindInput();
 }
 
 function enterApp(){
   $('login').style.display='none';
   $('app').classList.add('on');
-  var u=S.user;
-  $('un').textContent=u.name;
-  $('ue').textContent=u.email;
-  $('av').textContent=u.name.charAt(0).toUpperCase();
-  if(!S.cur||!S.chats[S.cur]) newChat();
-  else{renderList();renderChat();}
+  $('un').textContent=S.user.name;
+  $('ue').textContent=S.user.email;
+  if(S.user.photo){
+    $('av').innerHTML='<img src="'+esc(S.user.photo)+'" alt="">';
+  }else{
+    $('av').textContent=S.user.name.charAt(0).toUpperCase();
+  }
+  if(!S.cur||!S.chats[S.cur])newChat();
+  else{renderList();renderChat()}
   updateModes();
   updatePlaceholder();
   updateBadges();
 }
 
 function logout(){
-  if(!confirm('Sair?'))return;
-  try{localStorage.removeItem(LS.u);}catch(x){}
-  location.reload();
+  if(!confirm('Sair da conta?'))return;
+  signOut(auth).then(function(){location.reload()});
 }
 
-/* ========== CHATS ========== */
+// ========== CHATS ==========
 function newChat(){
   var id='c_'+Date.now();
   S.chats[id]={id:id,title:'Novo Chat',messages:[],t:Date.now()};
   S.cur=id;
-  save();renderList();renderChat();
+  save();
+  renderList();renderChat();
 }
 
 function save(){
-  try{
-    localStorage.setItem(LS.c,JSON.stringify(S.chats));
-    localStorage.setItem(LS.n,S.cur||'');
-  }catch(e){}
+  if(!S.user)return;
+  try{set(ref(db,'users/'+S.user.uid+'/chats/'+S.cur),S.chats[S.cur])}catch(e){}
 }
 
 function switchChat(id){
-  if(S.busy) stopResponse();
-  S.cur=id;save();renderList();renderChat();
+  if(S.busy)stopResponse();
+  S.cur=id;
+  renderList();renderChat();
   if(innerWidth<=900)$('sb').classList.remove('op');
 }
 
 function delChat(id,e){
   e.stopPropagation();
   if(!confirm('Deletar?'))return;
-  if(S.busy && S.cur===id) stopResponse();
+  if(S.busy&&S.cur===id)stopResponse();
   delete S.chats[id];
+  if(S.user)remove(ref(db,'users/'+S.user.uid+'/chats/'+id));
   if(S.cur===id){
     var k=Object.keys(S.chats);
     if(k.length)S.cur=k[0];else{newChat();return}
   }
-  save();renderList();renderChat();
+  renderList();renderChat();
 }
 
 function renderList(){
@@ -481,7 +532,7 @@ function renderList(){
     var el=document.createElement('div');
     el.className='ci'+(id===S.cur?' on':'');
     el.onclick=function(){switchChat(id)};
-    el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>'+esc(c.title)+'</span><div class="del"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></div>';
+    el.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>'+esc(c.title)+'</span><div class="del"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></div>';
     el.querySelector('.del').onclick=function(ev){delChat(id,ev)};
     list.appendChild(el);
   });
@@ -493,29 +544,23 @@ function renderChat(){
   $('cs').textContent=M[S.mode].sub;
   updatePlaceholder();
   $('ui').value='';$('ui').style.height='auto';$('ui').disabled=false;
-  setBtnState(false);
-  clearAttachment();
+  setBtnState(false);clearAttachment();
   var cin=$('cin');cin.innerHTML='';
   if(!c.messages.length){welcome();return}
   c.messages.forEach(function(m){
-    if(m.role==='assistant' && m.content.indexOf('<!--IMG-->')===0){
-      addMsgRaw(m.content.replace('<!--IMG-->',''));
-    } else {
-      addMsg(m.role,m.content,false);
-    }
+    if(m.role==='assistant'&&m.content.indexOf('<!--IMG-->')===0)addMsgRaw(m.content.replace('<!--IMG-->',''));
+    else addMsg(m.role,m.content,false);
   });
   scrollB();
 }
 
 function welcome(){
   var cin=$('cin');
-  cin.innerHTML='<div class="wc"><div class="wcl"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><h2>Olá, '+esc(S.user.name.split(' ')[0])+' 👋</h2><p>Eu sou a <strong>EXILED AI</strong>. Como posso ajudar?</p><div class="sg"><div class="sgt" data-q="Explique computação quântica de forma simples"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Computação quântica</div><div class="sgt" data-q="Escreva uma função Python de web scraping"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Web scraping Python</div><div class="sgt" data-q="Ideias de nomes para startup de IA"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0012 2z"/></svg>Nomes para startup</div><div class="sgt" data-q="Resuma a história da internet em 5 tópicos"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V6a2 2 0 012-2h14v13H6.5A2.5 2.5 0 004 19.5z"/></svg>História da internet</div></div></div>';
-  cin.querySelectorAll('.sgt').forEach(function(el){
-    el.onclick=function(){ $('ui').value=el.getAttribute('data-q'); send(); };
-  });
+  cin.innerHTML='<div class="wc"><div class="wcl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><h2>Olá, '+esc(S.user.name.split(' ')[0])+' 👋</h2><p>Eu sou a <strong>EXILED AI</strong>. Como posso ajudar?</p><div class="sg"><div class="sgt" data-q="Explique computação quântica de forma simples"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Computação quântica</div><div class="sgt" data-q="Escreva uma função Python de web scraping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Web scraping Python</div><div class="sgt" data-q="Ideias de nomes para startup de IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0012 2z"/></svg>Nomes para startup</div><div class="sgt" data-q="Resuma a história da internet em 5 tópicos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V6a2 2 0 012-2h14v13H6.5A2.5 2.5 0 004 19.5z"/></svg>História da internet</div></div></div>';
+  cin.querySelectorAll('.sgt').forEach(function(el){el.onclick=function(){$('ui').value=el.getAttribute('data-q');send()}});
 }
 
-/* ========== MESSAGES ========== */
+// ========== MESSAGES ==========
 function addMsg(role,content,anim){
   if(anim===undefined)anim=true;
   var cin=$('cin');
@@ -523,11 +568,8 @@ function addMsg(role,content,anim){
   var wrap=document.createElement('div');
   wrap.className='mg '+(role==='user'?'mu':'ma');
   if(!anim)wrap.style.animation='none';
-  if(role==='user'){
-    wrap.innerHTML='<div class="bb">'+esc(content)+'</div>';
-  }else{
-    wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+md(content)+'</div>';
-  }
+  if(role==='user')wrap.innerHTML='<div class="bb">'+esc(content)+'</div>';
+  else wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+md(content)+'</div>';
   cin.appendChild(wrap);
   return wrap;
 }
@@ -537,7 +579,7 @@ function addMsgRaw(html){
   var w=cin.querySelector('.wc');if(w)w.remove();
   var wrap=document.createElement('div');
   wrap.className='mg ma';
-  wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+html+'</div>';
+  wrap.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct">'+html+'</div>';
   cin.appendChild(wrap);
   return wrap;
 }
@@ -547,274 +589,152 @@ function addTyping(){
   var w=cin.querySelector('.wc');if(w)w.remove();
   var el=document.createElement('div');
   el.className='mg ma';el.id='tpy';
-  el.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct"><div class="ty"><span></span><span></span><span></span></div></div>';
-  cin.appendChild(el);
-  scrollB();
+  el.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct"><div class="ty"><span></span><span></span><span></span></div></div>';
+  cin.appendChild(el);scrollB();
 }
 
 function rmTyping(){var el=$('tpy');if(el)el.remove()}
-function scrollB(){var a=$('ca');requestAnimationFrame(function(){a.scrollTop=a.scrollHeight});}
+function scrollB(){var a=$('ca');requestAnimationFrame(function(){a.scrollTop=a.scrollHeight})}
 
-/* ========== SEND FLOW ========== */
-function onSendClick(){
-  if(S.busy){stopResponse();}
-  else{send();}
-}
+// ========== SEND ==========
+function onSendClick(){if(S.busy)stopResponse();else send()}
 
 function stopResponse(){
-  if(S.abort){try{S.abort.abort();}catch(e){}S.abort=null;}
+  if(S.abort){try{S.abort.abort()}catch(e){}S.abort=null}
   S.busy=false;rmTyping();setBtnState(false);
   $('ui').disabled=false;$('ui').focus();
 }
 
 function setBtnState(busy){
   var b=$('se');
-  if(busy){
-    b.classList.add('stop');b.innerHTML=STOP_ICON;b.disabled=false;b.title='Parar';
-    $('ui').disabled=true;
-  }else{
-    b.classList.remove('stop');b.innerHTML=SEND_ICON;b.disabled=false;b.title='Enviar';
-    $('ui').disabled=false;
-  }
+  if(busy){b.classList.add('stop');b.innerHTML=STOP_ICON;b.disabled=false;$('ui').disabled=true}
+  else{b.classList.remove('stop');b.innerHTML=SEND_ICON;b.disabled=false;$('ui').disabled=false}
 }
 
 function updatePlaceholder(){
   var inp=$('ui');
-  if(S.mode==='image') inp.placeholder='Descreva a imagem que quer gerar...';
-  else if(S.attachment) inp.placeholder='Pergunte sobre a imagem...';
+  if(S.mode==='image')inp.placeholder='Descreva a imagem que quer gerar...';
+  else if(S.attachment)inp.placeholder='Pergunte sobre a imagem...';
   else inp.placeholder='Pergunte qualquer coisa...';
 }
 
-/* ========== ATTACHMENT (IMAGE ANALYSIS) ========== */
-function clearAttachment(){
-  S.attachment=null;
-  $('previewWrap').innerHTML='';
-  updatePlaceholder();
-}
+function clearAttachment(){S.attachment=null;$('previewWrap').innerHTML='';updatePlaceholder()}
 
-function onImgClick(){
-  if(!canUse('imgAnalysis')){toast('Limite diário de análise de imagem atingido ('+LIMITS.imgAnalysis+'). Volta amanhã!');return}
-  $('fileInput').click();
-}
-
-function onFileSelected(e){
-  var file=e.target.files[0];
-  if(!file)return;
-  if(file.size>20*1024*1024){toast('Imagem muito grande (máx 20MB)');return}
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    S.attachment={data:ev.target.result,name:file.name,type:file.type};
-    showPreview();
-    updatePlaceholder();
-    $('ui').focus();
-  };
-  reader.readAsDataURL(file);
-  e.target.value='';
-}
-
-function showPreview(){
-  var wrap=$('previewWrap');
-  if(!S.attachment){wrap.innerHTML='';return}
-  wrap.innerHTML='<div class="preview"><img src="'+S.attachment.data+'"><span>'+esc(S.attachment.name)+' — pronta para analisar</span><button onclick="clearAttachment()"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
-}
-
-/* ========== SEND ========== */
 function send(){
   if(S.busy)return;
-  var inp=$('ui');
-  var text=inp.value.trim();
-  var hasAttach=!!S.attachment;
-  if(!text && !hasAttach)return;
+  var inp=$('ui');var text=inp.value.trim();var hasAttach=!!S.attachment;
+  if(!text&&!hasAttach)return;
+  var c=S.chats[S.cur];if(!c)return;
 
-  if(!hasAttach && S.mode==='image'){
-    if(!canUse('imageGen')){toast('Limite diário de geração de imagem atingido ('+LIMITS.imageGen+'). Volta amanhã!');return}
-    generateAgnesImage(text);
+  if(!hasAttach&&S.mode==='image'){
+    if(!canUse('imageGen')){toast('Limite diário de geração de imagem atingido');return}
+    if(c.messages.length===0){c.title='🎨 '+text.slice(0,30);$('ct').textContent=c.title;renderList()}
+    c.messages.push({role:'user',content:text});addMsg('user',text);save();
+    incUsage('imageGen');inp.value='';inp.style.height='auto';
+    S.busy=true;setBtnState(true);addTyping();
+    generateAgnesImage(text,c);
     return;
   }
 
   if(hasAttach){
-    if(!canUse('imgAnalysis')){toast('Limite diário de análise de imagem atingido ('+LIMITS.imgAnalysis+'). Volta amanhã!');return}
-    analyzeImage(text||'O que há nesta imagem?');
+    if(!canUse('imgAnalysis')){toast('Limite diário de análise atingido');return}
+    if(c.messages.length===0){c.title='🖼️ '+text.slice(0,30);$('ct').textContent=c.title;renderList()}
+    c.messages.push({role:'user',content:'[📷 '+S.attachment.name+']\n\n'+(text||'O que há nesta imagem?')});
+    addMsg('user','[📷 '+S.attachment.name+']\n\n'+(text||'O que há nesta imagem?'));
+    save();incUsage('imgAnalysis');
+    var att=S.attachment;clearAttachment();
+    inp.value='';inp.style.height='auto';
+    S.busy=true;setBtnState(true);addTyping();
+    analyzeImage(text||'O que há nesta imagem?',att,c);
     return;
   }
 
-  if(!canUse('textChat')){toast('Limite diário de chat atingido ('+LIMITS.textChat+'). Volta amanhã!');return}
-
-  var c=S.chats[S.cur];if(!c)return;
-  if(c.messages.length===0){
-    c.title=text.slice(0,40)+(text.length>40?'…':'');
-    $('ct').textContent=c.title;
-    renderList();
-  }
-
-  c.messages.push({role:'user',content:text});
-  addMsg('user',text);
-  save();
-  incUsage('textChat');
-  inp.value='';inp.style.height='auto';
+  if(!canUse('textChat')){toast('Limite diário de chat atingido');return}
+  if(c.messages.length===0){c.title=text.slice(0,40)+(text.length>40?'…':'');$('ct').textContent=c.title;renderList()}
+  c.messages.push({role:'user',content:text});addMsg('user',text);save();
+  incUsage('textChat');inp.value='';inp.style.height='auto';
   S.busy=true;setBtnState(true);addTyping();
 
-  var ctrl=new AbortController();
-  S.abort=ctrl;
+  var ctrl=new AbortController();S.abort=ctrl;
   var m=M[S.mode];
   var msgs=[{role:'system',content:m.p}].concat(c.messages.map(function(x){return {role:x.role,content:x.content}}));
 
-  fetch(GROQ_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-    body:JSON.stringify({model:m.model,messages:msgs,temperature:m.temp,max_tokens:4096}),
-    signal:ctrl.signal
-  }).then(function(r){
-    if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});
-    return r.json();
-  }).then(function(d){
-    rmTyping();
-    var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
-    c.messages.push({role:'assistant',content:rep});
-    addMsg('assistant',rep);
-    save();scrollB();
-  }).catch(function(err){
-    rmTyping();
-    if(err.name==='AbortError'){addMsg('assistant','⏹️ *Resposta interrompida.*');scrollB();}
-    else{addMsg('assistant','❌ **Erro**\n\n`'+esc(err.message)+'`');scrollB();}
-  }).then(function(){
-    S.abort=null;S.busy=false;setBtnState(false);inp.focus();
-  });
+  fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:m.model,messages:msgs,temperature:m.temp,max_tokens:4096}),signal:ctrl.signal})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
+    .then(function(d){
+      rmTyping();
+      var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
+      c.messages.push({role:'assistant',content:rep});
+      addMsg('assistant',rep);save();scrollB();
+    })
+    .catch(function(err){
+      rmTyping();
+      if(err.name==='AbortError'){addMsg('assistant','⏹️ *Resposta interrompida.*');scrollB()}
+      else{addMsg('assistant','❌ **Erro**\n\n`'+esc(err.message)+'`');scrollB()}
+    })
+    .then(function(){S.abort=null;S.busy=false;setBtnState(false);inp.focus()});
 }
 
-/* ========== IMAGE ANALYSIS ========== */
-function analyzeImage(prompt){
-  var c=S.chats[S.cur];if(!c)return;
-  var att=S.attachment;
-  if(!att)return;
-
-  if(c.messages.length===0){
-    c.title='🖼️ '+prompt.slice(0,30);
-    $('ct').textContent=c.title;
-    renderList();
-  }
-
-  var userContent='[📷 '+att.name+']\n\n'+prompt;
-  c.messages.push({role:'user',content:userContent});
-  addMsg('user',userContent);
-  save();
-  incUsage('imgAnalysis');
-  clearAttachment();
-  $('ui').value='';$('ui').style.height='auto';
-  S.busy=true;setBtnState(true);addTyping();
-
-  var ctrl=new AbortController();
-  S.abort=ctrl;
-
-  // History for context (only text)
+// ========== IMAGE ANALYSIS ==========
+function analyzeImage(prompt,att,c){
+  var ctrl=new AbortController();S.abort=ctrl;
   var history=c.messages.slice(0,-1).map(function(x){return {role:x.role,content:x.content}});
+  var msgs=[{role:'system',content:'Você é a EXILED AI. Analise a imagem em português brasileiro de forma detalhada.'}]
+    .concat(history)
+    .concat([{role:'user',content:[{type:'text',text:prompt},{type:'image_url',image_url:{url:att.data}}]}]);
 
-  var msgs=[
-    {role:'system',content:'Você é a EXILED AI. Analise a imagem em português brasileiro de forma detalhada.'}
-  ].concat(history).concat([{
-    role:'user',
-    content:[
-      {type:'text',text:prompt},
-      {type:'image_url',image_url:{url:att.data}}
-    ]
-  }]);
-
-  fetch(GROQ_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-    body:JSON.stringify({model:VISION_MODEL,messages:msgs,temperature:.7,max_tokens:2048}),
-    signal:ctrl.signal
-  }).then(function(r){
-    if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});
-    return r.json();
-  }).then(function(d){
-    rmTyping();
-    var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
-    c.messages.push({role:'assistant',content:rep});
-    addMsg('assistant',rep);
-    save();scrollB();
-  }).catch(function(err){
-    rmTyping();
-    if(err.name==='AbortError'){addMsg('assistant','⏹️ *Análise interrompida.*');scrollB();}
-    else{addMsg('assistant','❌ **Erro ao analisar imagem**\n\n`'+esc(err.message)+'`');scrollB();}
-  }).then(function(){
-    S.abort=null;S.busy=false;setBtnState(false);$('ui').focus();
-  });
+  fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:VISION_MODEL,messages:msgs,temperature:.7,max_tokens:2048}),signal:ctrl.signal})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
+    .then(function(d){
+      rmTyping();
+      var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
+      c.messages.push({role:'assistant',content:rep});
+      addMsg('assistant',rep);save();scrollB();
+    })
+    .catch(function(err){
+      rmTyping();
+      if(err.name==='AbortError'){addMsg('assistant','⏹️ *Análise interrompida.*');scrollB()}
+      else{addMsg('assistant','❌ **Erro ao analisar imagem**\n\n`'+esc(err.message)+'`');scrollB()}
+    })
+    .then(function(){S.abort=null;S.busy=false;setBtnState(false);$('ui').focus()});
 }
 
-/* ========== IMAGE GENERATION (AGNES) ========== */
-function generateAgnesImage(prompt){
-  var c=S.chats[S.cur];if(!c)return;
-  if(c.messages.length===0){
-    c.title='🎨 '+prompt.slice(0,30);
-    $('ct').textContent=c.title;
-    renderList();
-  }
-  c.messages.push({role:'user',content:prompt});
-  addMsg('user',prompt);
-  save();
-  incUsage('imageGen');
-  $('ui').value='';$('ui').style.height='auto';
-  S.busy=true;setBtnState(true);addTyping();
-
-  var ctrl=new AbortController();
-  S.abort=ctrl;
-  var body={model:'agnes-image-2.0-flash',prompt:prompt,size:'1024x1024',extra_body:{response_format:'url'}};
-
-  fetch(AGNES_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+AGNES_KEY},
-    body:JSON.stringify(body),
-    signal:ctrl.signal
-  }).then(function(r){
-    if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});
-    return r.json();
-  }).then(function(data){
-    rmTyping();
-    var imgUrl=data.data&&data.data[0]&&(data.data[0].url||('data:image/png;base64,'+data.data[0].b64_json));
-    if(!imgUrl)throw new Error('Nenhuma URL retornada.');
-    var safePrompt=esc(prompt);
-    var filename='exiled-'+Date.now()+'.png';
-    var html='<p>🖼️ <em>'+safePrompt+'</em></p>'+
-      '<div class="imgwrap">'+
-        '<img src="'+imgUrl+'" alt="'+safePrompt+'" data-filename="'+filename+'">'+
-        '<div class="imgbar">'+
-          '<a class="imgbtn" href="'+imgUrl+'" download="'+filename+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Baixar</a>'+
-          '<button class="imgbtn" onclick="copyImgUrl(this)" data-url="'+imgUrl+'"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar URL</button>'+
-          '<a class="imgbtn" href="'+imgUrl+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>Abrir</a>'+
-        '</div>'+
-      '</div>';
-    var stored='<!--IMG-->'+html;
-    c.messages.push({role:'assistant',content:stored});
-    addMsgRaw(html);
-    save();scrollB();
-  }).catch(function(err){
-    rmTyping();
-    if(err.name==='AbortError'){addMsg('assistant','⏹️ *Geração interrompida.*');scrollB();}
-    else{addMsg('assistant','❌ **Erro ao gerar imagem**\n\n`'+esc(err.message)+'`');scrollB();}
-  }).then(function(){
-    S.abort=null;S.busy=false;setBtnState(false);$('ui').focus();
-  });
+// ========== IMAGE GEN ==========
+function generateAgnesImage(prompt,c){
+  var ctrl=new AbortController();S.abort=ctrl;
+  fetch(AGNES_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+AGNES_KEY},body:JSON.stringify({model:'agnes-image-2.0-flash',prompt:prompt,size:'1024x1024',extra_body:{response_format:'url'}}),signal:ctrl.signal})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
+    .then(function(data){
+      rmTyping();
+      var imgUrl=data.data&&data.data[0]&&(data.data[0].url||('data:image/png;base64,'+data.data[0].b64_json));
+      if(!imgUrl)throw new Error('Nenhuma URL retornada.');
+      var safePrompt=esc(prompt);var filename='exiled-'+Date.now()+'.png';
+      var html='<p>🖼️ <em>'+safePrompt+'</em></p><div class="imgwrap"><img src="'+imgUrl+'" alt="'+safePrompt+'"><div class="imgbar"><a class="imgbtn" href="'+imgUrl+'" download="'+filename+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Baixar</a><button class="imgbtn" onclick="copyImgUrl(this)" data-url="'+imgUrl+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar URL</button><a class="imgbtn" href="'+imgUrl+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>Abrir</a></div></div>';
+      c.messages.push({role:'assistant',content:'<!--IMG-->'+html});
+      addMsgRaw(html);save();scrollB();
+    })
+    .catch(function(err){
+      rmTyping();
+      if(err.name==='AbortError'){addMsg('assistant','⏹️ *Geração interrompida.*');scrollB()}
+      else{addMsg('assistant','❌ **Erro ao gerar imagem**\n\n`'+esc(err.message)+'`');scrollB()}
+    })
+    .then(function(){S.abort=null;S.busy=false;setBtnState(false);$('ui').focus()});
 }
 
 window.copyImgUrl=function(btn){
-  var url=btn.getAttribute('data-url');
-  if(!url)return;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(function(){
-      var old=btn.innerHTML;
-      btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
-      setTimeout(function(){btn.innerHTML=old},1500);
-    });
-  }
+  var url=btn.getAttribute('data-url');if(!url)return;
+  if(navigator.clipboard)navigator.clipboard.writeText(url).then(function(){
+    var old=btn.innerHTML;
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+    setTimeout(function(){btn.innerHTML=old},1500);
+  });
 };
-
 window.clearAttachment=clearAttachment;
 
-/* ========== MICROPHONE (WHISPER) ========== */
+// ========== MIC ==========
 function onMicClick(){
-  if(S.recording){stopRecording();return;}
-  if(!canUse('transcribe')){toast('Limite diário de transcrição atingido ('+LIMITS.transcribe+'). Volta amanhã!');return}
+  if(S.recording){stopRecording();return}
+  if(!canUse('transcribe')){toast('Limite diário de transcrição atingido');return}
   startRecording();
 }
 
@@ -822,48 +742,34 @@ async function startRecording(){
   try{
     var stream=await navigator.mediaDevices.getUserMedia({audio:true});
     var mime='audio/webm';
-    if(MediaRecorder.isTypeSupported && !MediaRecorder.isTypeSupported(mime)){
-      if(MediaRecorder.isTypeSupported('audio/mp4'))mime='audio/mp4';
-    }
+    if(MediaRecorder.isTypeSupported&&!MediaRecorder.isTypeSupported(mime)){if(MediaRecorder.isTypeSupported('audio/mp4'))mime='audio/mp4'}
     var rec=new MediaRecorder(stream,{mimeType:mime});
     S.audioChunks=[];
-    rec.ondataavailable=function(e){if(e.data.size>0)S.audioChunks.push(e.data);};
+    rec.ondataavailable=function(e){if(e.data.size>0)S.audioChunks.push(e.data)};
     rec.onstop=async function(){
       stream.getTracks().forEach(function(t){t.stop()});
-      S.recording=false;
-      $('btnMic').classList.remove('rec');
+      S.recording=false;$('btnMic').classList.remove('rec');
       await transcribeAudio();
     };
-    rec.start();
-    S.recorder=rec;S.recording=true;
+    rec.start();S.recorder=rec;S.recording=true;
     $('btnMic').classList.add('rec');
-    toast('🎤 Gravando... clique de novo para parar');
-  }catch(e){
-    toast('Erro ao acessar microfone: '+e.message);
-  }
+    toast('🎤 Gravando... toque de novo pra parar');
+  }catch(e){toast('Erro ao acessar microfone: '+e.message)}
 }
 
-function stopRecording(){
-  if(S.recorder && S.recording){
-    S.recorder.stop();
-  }
-}
+function stopRecording(){if(S.recorder&&S.recording)S.recorder.stop()}
 
 async function transcribeAudio(){
   if(!S.audioChunks.length)return;
   var blob=new Blob(S.audioChunks,{type:S.audioChunks[0].type||'audio/webm'});
   S.audioChunks=[];
-  var inp=$('ui');
-  var prev=inp.value;
-  inp.placeholder='Transcrevendo...';
-  inp.disabled=true;
-
+  var inp=$('ui');var prev=inp.value;
+  inp.placeholder='Transcrevendo...';inp.disabled=true;
   var fd=new FormData();
   fd.append('file',blob,'audio.webm');
   fd.append('model',STT_MODEL);
   fd.append('language','pt');
   fd.append('response_format','json');
-
   try{
     var r=await fetch(GROQ_STT,{method:'POST',headers:{'Authorization':'Bearer '+GROQ_KEY},body:fd});
     if(!r.ok){var t=await r.text();throw new Error('HTTP '+r.status+': '+t)}
@@ -873,69 +779,37 @@ async function transcribeAudio(){
       inp.value=(prev?prev+' ':'')+txt;
       inp.style.height='auto';
       inp.style.height=Math.min(inp.scrollHeight,120)+'px';
-      incUsage('transcribe');
-      toast('✅ Transcrito!');
-    }else{
-      toast('Nada detectado no áudio');
-    }
-  }catch(e){
-    toast('Erro na transcrição: '+e.message);
-  }finally{
-    inp.disabled=false;
-    updatePlaceholder();
-    inp.focus();
-  }
+      incUsage('transcribe');toast('✅ Transcrito!');
+    }else toast('Nada detectado no áudio');
+  }catch(e){toast('Erro na transcrição: '+e.message)}
+  finally{inp.disabled=false;updatePlaceholder();inp.focus()}
 }
 
-/* ========== TURBINAR PROMPT ========== */
+// ========== TURBINAR ==========
 function onTurbinarClick(){
   var text=$('ui').value.trim();
   if(!text){toast('Escreva algo primeiro pra turbinar');return}
-  var btn=$('btnTurbinar');
-  btn.disabled=true;btn.style.opacity=.5;
-  $('turboText').value='✨ Turbinando...';
-  $('modalTurbo').classList.add('on');
-
+  var btn=$('btnTurbinar');btn.disabled=true;btn.style.opacity=.5;
+  $('turboText').value='✨ Turbinando...';$('modalTurbo').classList.add('on');
   var sys='Você é um especialista em prompts para geração de imagem. O usuário vai te dar um prompt curto em português. Reescreva em INGLÊS, profissional, adicionando detalhes de: composição, iluminação, estilo, paleta de cores, qualidade e câmera. Responda APENAS com o prompt final, sem explicações, sem aspas, sem markdown.';
-  var msgs=[{role:'system',content:sys},{role:'user',content:text}];
-
-  fetch(GROQ_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-    body:JSON.stringify({model:'openai/gpt-oss-120b',messages:msgs,temperature:.7,max_tokens:300})
-  }).then(function(r){
-    if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});
-    return r.json();
-  }).then(function(d){
-    var out=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||text;
-    $('turboText').value=out.trim();
-  }).catch(function(e){
-    $('turboText').value=text;
-    toast('Erro ao turbinar: '+e.message);
-  }).then(function(){
-    btn.disabled=false;btn.style.opacity=1;
-  });
+  fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:'openai/gpt-oss-120b',messages:[{role:'system',content:sys},{role:'user',content:text}],temperature:.7,max_tokens:300})})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
+    .then(function(d){var out=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||text;$('turboText').value=out.trim()})
+    .catch(function(e){$('turboText').value=text;toast('Erro ao turbinar: '+e.message)})
+    .then(function(){btn.disabled=false;btn.style.opacity=1});
 }
 
 window.closeTurbo=function(){$('modalTurbo').classList.remove('on')};
-
 window.useTurbo=function(){
-  var t=$('turboText').value.trim();
-  if(t)$('ui').value=t;
+  var t=$('turboText').value.trim();if(t)$('ui').value=t;
   $('modalTurbo').classList.remove('on');
-  $('ui').style.height='auto';
-  $('ui').style.height=Math.min($('ui').scrollHeight,120)+'px';
-  $('ui').focus();
+  $('ui').style.height='auto';$('ui').style.height=Math.min($('ui').scrollHeight,120)+'px';$('ui').focus();
 };
 
-/* ========== MARKDOWN ========== */
+// ========== MD ==========
 function md(text){
-  var html=esc(text);
-  var cb=[];
-  html=html.replace(/```(\w*)\n([\s\S]*?)```/g,function(m,lang,code){
-    var i=cb.length;cb.push({lang:lang||'code',code:code.trim()});
-    return '\u0000C'+i+'\u0000';
-  });
+  var html=esc(text);var cb=[];
+  html=html.replace(/```(\w*)\n([\s\S]*?)```/g,function(m,lang,code){var i=cb.length;cb.push({lang:lang||'code',code:code.trim()});return '\u0000C'+i+'\u0000'});
   html=html.replace(/`([^`]+)`/g,'<code>$1</code>');
   html=html.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
   html=html.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
@@ -944,8 +818,7 @@ function md(text){
   html=html.replace(/^# (.+)$/gm,'<h1>$1</h1>');
   html=html.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
   html=html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-  var lines=html.split('\n');
-  var out=[],inUl=false,inOl=false;
+  var lines=html.split('\n');var out=[],inUl=false,inOl=false;
   for(var k=0;k<lines.length;k++){
     var line=lines[k];
     if(/^\s*[-*] (.+)/.test(line)){
@@ -960,8 +833,7 @@ function md(text){
       out.push(line);
     }
   }
-  if(inUl)out.push('</ul>');
-  if(inOl)out.push('</ol>');
+  if(inUl)out.push('</ul>');if(inOl)out.push('</ol>');
   html=out.join('\n');
   html=html.split(/\n{2,}/).map(function(b){
     var t=b.trim();if(!t)return '';
@@ -970,77 +842,42 @@ function md(text){
     return '<p>'+t.replace(/\n/g,'<br>')+'</p>';
   }).join('\n');
   html=html.replace(/\u0000C(\d+)\u0000/g,function(m,i){
-    var o=cb[+i];
-    var id='code_'+Math.random().toString(36).slice(2,9);
-    return '<div class="cb"><div class="ch"><span class="clg">'+esc(o.lang)+'</span><button class="cpb" data-c="'+id+'"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button></div><pre><code id="'+id+'">'+esc(o.code)+'</code></pre></div>';
+    var o=cb[+i];var id='code_'+Math.random().toString(36).slice(2,9);
+    return '<div class="cb"><div class="ch"><span class="clg">'+esc(o.lang)+'</span><button class="cpb" data-c="'+id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button></div><pre><code id="'+id+'">'+esc(o.code)+'</code></pre></div>';
   });
   return html;
 }
 
 document.addEventListener('click',function(e){
-  var b=e.target.closest && e.target.closest('.cpb');
-  if(!b)return;
-  var id=b.getAttribute('data-c');
-  var el=$(id);if(!el)return;
+  var b=e.target.closest&&e.target.closest('.cpb');if(!b)return;
+  var id=b.getAttribute('data-c');var el=$(id);if(!el)return;
   var txt=el.textContent;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(txt).then(function(){
-      b.classList.add('cp');
-      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
-      setTimeout(function(){
-        b.classList.remove('cp');
-        b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar';
-      },1800);
-    });
-  }else{
-    var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
-    b.textContent='Copiado!';
-  }
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){
+    b.classList.add('cp');
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+    setTimeout(function(){b.classList.remove('cp');b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar'},1800);
+  });
 });
 
-/* ========== MODES ========== */
+// ========== MODES ==========
 function bindModes(){
   document.querySelectorAll('.mb').forEach(function(b){
     b.addEventListener('click',function(){
-      if(S.busy) stopResponse();
-      var m=b.getAttribute('data-m');
-      if(!M[m])return;
-      S.mode=m;
-      try{localStorage.setItem(LS.m,m)}catch(x){}
-      updateModes();
-      $('cs').textContent=M[m].sub;
-      updatePlaceholder();
-      $('ui').focus();
+      if(S.busy)stopResponse();
+      var m=b.getAttribute('data-m');if(!M[m])return;
+      S.mode=m;$('cs').textContent=M[m].sub;updateModes();updatePlaceholder();$('ui').focus();
     });
   });
 }
+function updateModes(){document.querySelectorAll('.mb').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')===S.mode)})}
 
-function updateModes(){
-  document.querySelectorAll('.mb').forEach(function(b){
-    b.classList.toggle('on',b.getAttribute('data-m')===S.mode);
-  });
-}
-
-/* ========== INPUT ========== */
 function bindInput(){
   var i=$('ui');
-  i.addEventListener('input',function(){
-    i.style.height='auto';
-    i.style.height=Math.min(i.scrollHeight,120)+'px';
-  });
-  i.addEventListener('keydown',function(e){
-    if(e.key==='Enter'&&!e.shiftKey){
-      e.preventDefault();
-      if(!S.busy) send();
-    }
-  });
+  i.addEventListener('input',function(){i.style.height='auto';i.style.height=Math.min(i.scrollHeight,120)+'px'});
+  i.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!S.busy)send()}});
 }
 
-/* ========== START ========== */
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-else init();
-
-})();
+bindEvents();
 </script>
 </body>
 </html>
