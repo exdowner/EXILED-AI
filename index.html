@@ -50,6 +50,14 @@ input:focus{border-color:#555;background:var(--bg3)}
 .nb:hover{background:var(--grad);color:#000}
 .nb:hover svg{stroke:#000}
 .nb svg{width:16px;height:16px;stroke:#fff;stroke-width:2.2;fill:none;transition:stroke .2s}
+
+/* BUSCA */
+.search-wrap{margin:0 12px 10px;padding:0 12px;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px;display:flex;align-items:center;gap:8px;transition:.2s}
+.search-wrap:focus-within{border-color:#555;background:var(--bg3)}
+.search-wrap svg{width:14px;height:14px;stroke:var(--dim);stroke-width:2;fill:none;flex-shrink:0}
+.search-wrap input{flex:1;background:none;border:none;color:#fff;font-size:12.5px;outline:none;padding:10px 0;margin:0}
+.search-wrap input::placeholder{color:var(--dim2)}
+
 .cl{flex:1;overflow-y:auto;padding:4px 10px 12px}
 .ci{padding:10px 12px;border-radius:9px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);cursor:pointer;margin-bottom:2px;transition:.15s}
 .ci:hover{background:var(--bg2);color:#fff}
@@ -61,6 +69,7 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ci .del:hover{background:rgba(255,77,77,.2)}
 .ci .del svg{width:12px;height:12px}
 .ci .del:hover svg{stroke:var(--red)}
+.empty-search{text-align:center;padding:20px;font-size:12px;color:var(--dim2)}
 
 .invite-btn{margin:0 10px 6px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd2);border-radius:11px;display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:#fff;transition:all .2s;width:calc(100% - 20px);cursor:pointer}
 .invite-btn:hover{background:var(--grad);color:#000;border-color:transparent}
@@ -217,7 +226,6 @@ input:focus{border-color:#555;background:var(--bg3)}
 .btn-danger:hover{background:#e63e3e}
 .btn-danger:disabled{opacity:.4;cursor:not-allowed}
 
-/* PAY MODAL */
 .pay-header{text-align:center;margin-bottom:22px}
 .pay-icon{width:70px;height:70px;margin:0 auto 16px;background:var(--rose-grad);border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(244,63,94,.35)}
 .pay-icon svg{width:36px;height:36px;stroke:#fff;stroke-width:2.2;fill:none}
@@ -274,7 +282,6 @@ input:focus{border-color:#555;background:var(--bg3)}
 .pay-success h3{justify-content:center;font-size:20px;margin-bottom:10px;color:#fff}
 .pay-success p{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:22px}
 
-/* INVITE MODAL */
 .invite-code-box{background:linear-gradient(135deg,rgba(244,63,94,.08),rgba(190,18,60,.08));border:1px solid rgba(244,63,94,.3);border-radius:14px;padding:20px;margin-bottom:18px;text-align:center}
 .invite-code{font-family:Consolas,Monaco,monospace;font-size:22px;color:var(--rose);font-weight:900;letter-spacing:2px;word-break:break-all;margin-bottom:14px}
 .copy-invite{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;background:var(--rose-grad);color:#fff;font-size:12.5px;font-weight:700;transition:.15s;cursor:pointer;border:none}
@@ -289,7 +296,6 @@ input:focus{border-color:#555;background:var(--bg3)}
 .progress-hint{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
 .progress-hint b{color:#fff}
 
-/* SETTINGS MODAL */
 .settings-section{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px;margin-bottom:14px}
 .settings-section-title{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .settings-section-title svg{width:13px;height:13px;stroke:var(--dim);stroke-width:2.2;fill:none}
@@ -396,6 +402,10 @@ input:focus{border-color:#555;background:var(--bg3)}
       <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
     </div>
     <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="chatSearch" placeholder="Buscar chat..." autocomplete="off">
+    </div>
     <div class="cl" id="cl"></div>
 
     <button class="invite-btn" id="inviteBtn">
@@ -583,7 +593,6 @@ input:focus{border-color:#555;background:var(--bg3)}
   </div>
 </div>
 
-<!-- MODAL CONVITE -->
 <div class="modal-bg" id="modalInvite">
   <div class="modal">
     <div class="pay-header" style="margin-bottom:18px">
@@ -624,7 +633,6 @@ input:focus{border-color:#555;background:var(--bg3)}
   </div>
 </div>
 
-<!-- MODAL CONFIGURAÇÕES -->
 <div class="modal-bg" id="modalSettings">
   <div class="modal">
     <h3 style="margin-bottom:18px">
@@ -694,7 +702,6 @@ input:focus{border-color:#555;background:var(--bg3)}
   </div>
 </div>
 
-<!-- MODAL LIMITE -->
 <div class="modal-bg" id="modalLimit">
   <div class="modal" style="max-width:380px">
     <div class="limit-icon">
@@ -740,7 +747,7 @@ import {
   updatePassword, sendPasswordResetEmail, deleteUser,
   EmailAuthProvider, reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, remove, onValue, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB6XfFptak35pvbxmaxzbHq-kwSoo_XwUc",
@@ -761,7 +768,7 @@ const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 const GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
 const AGNES_KEY='sk-YHIGwJKI72lqvP0JBiIpdETWIM5qwdjt5Hq2zUq41A66pNf4';
 const AGNES_URL='https://apihub.agnes-ai.com/v1/images/generations';
-const VISION_MODEL='qwen/qwen3.6-27b';
+const VISION_MODEL='meta-llama/llama-4-scout-17b-16e-instruct';
 const STT_MODEL='whisper-large-v3-turbo';
 
 const RENDER_URL='https://exiled-bot.onrender.com';
@@ -770,11 +777,11 @@ const PIX_KEY='sampteken@gmail.com';
 const LIMITS={imgAnalysis:5,transcribe:20,imageGen:6,textChat:100};
 const LS={lim:'exlim'};
 
-var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0};
+var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0,chatListener:null};
 
 var M={
  normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.'},
- code:{model:'openai/gpt-oss-120b',temp:.4,sub:'Especialista em código',p:'Você é a EXILED AI no modo CÓDIGO — engenheiro de software sênior. Regras OBRIGATÓRIAS para HTML/CSS/JS:\n1. Sempre envie o código COMPLETO em um único bloco markdown ```html começando com <!DOCTYPE html> e terminando com </html>.\n2. NÃO use caracteres de escape desnecessários, NÃO use \\n literais dentro de strings, NÃO quebre tags HTML.\n3. Use código LIMPO, bem indentado, sem caracteres invisíveis ou estranhos.\n4. Se o usuário pedir uma página/site/jogo, entregue TUDO num só arquivo funcional.\n5. Comente partes importantes do código.\n6. Explique brevemente o que o código faz DEPOIS do bloco de código.\nResponda em português brasileiro.'},
+ code:{model:'openai/gpt-oss-120b',temp:.4,sub:'Especialista em código',p:'Você é a EXILED AI no modo CÓDIGO. Regras OBRIGATÓRIAS:\n1. NUNCA use HTML entities (como &quot; &#39; &lt; &gt; &amp;) dentro de strings JavaScript. Use apenas aspas normais: " e \'.\n2. NUNCA escape caracteres com barra invertida. Se precisar de quebra de linha em string, use template literals (crase) ou concatenação.\n3. Sempre entregue o código COMPLETO num bloco começando com <!DOCTYPE html> e terminando com </html>.\n4. Código limpo, indentado, sem caracteres invisíveis ou estranhos.\n5. Se pedir jogo/página, entregue tudo num arquivo único funcional.\n6. Comente partes importantes do código.\n7. Explique brevemente DEPOIS do bloco de código.\nResponda em português brasileiro.'},
  fast:{model:'openai/gpt-oss-20b',temp:.6,sub:'Respostas rápidas',p:'Você é a EXILED AI no modo RÁPIDO. Seja concisa e direta. Português brasileiro.'},
  think:{model:'openai/gpt-oss-120b',temp:.5,sub:'Pensar profundo',p:'Você é a EXILED AI no modo PENSAR. Analise com cuidado antes de responder. Português brasileiro.'},
  image:{model:'agnes-image-2.0-flash',temp:0,sub:'Gerar imagens com IA',p:''}
@@ -897,7 +904,7 @@ $('payFile').addEventListener('change',function(e){
   };
   reader.readAsDataURL(file);
 });
-window.removePayFile=function(){$('payAttachment') ; S.payAttachment=null;$('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value='';};
+window.removePayFile=function(){S.payAttachment=null;$('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value='';};
 
 window.sendComprovante=async function(){
   var nome=$('payName').value.trim();
@@ -917,7 +924,6 @@ window.sendComprovante=async function(){
   $('paySendBtn').disabled=false;$('paySendBtn').textContent='Enviar comprovante';
 };
 
-// ========== SETTINGS ==========
 function openSettings(){
   $('modalSettings').classList.add('on');
   hideChangePass();
@@ -985,17 +991,12 @@ window.doDeleteAccount=async function(){
     var user=auth.currentUser;
     if(!user)throw new Error('Não autenticado');
     var myUid=user.uid;
-    var myEmail=user.email;
-    // Apaga chats
     try{ await remove(ref(db,'users/'+myUid+'/chats')); }catch(e){console.log('del chats',e)}
-    // Apaga codigo de convite do indice
     try{
       var codeSnap=await get(ref(db,'users/'+myUid+'/codigoConvite'));
       if(codeSnap.exists()) await remove(ref(db,'convites/'+codeSnap.val()));
     }catch(e){console.log('del code',e)}
-    // Apaga perfil
     try{ await remove(ref(db,'users/'+myUid)); }catch(e){console.log('del user',e)}
-    // Apaga do Auth
     await deleteUser(user);
     toast('Conta deletada. Até a próxima!');
     setTimeout(function(){location.reload()},1500);
@@ -1065,16 +1066,18 @@ $('btnEmail').addEventListener('click',async function(){
       await set(ref(db,'users/'+cred.user.uid+'/convitesRecompensados'),false);
       await set(ref(db,'convites/'+meuCodigo),{uid:cred.user.uid});
       if(quemConvidou){
-        var countSnap=await get(ref(db,'users/'+quemConvidou+'/convitesFeitos'));
-        var atual=countSnap.exists()?countSnap.val():0;
-        var novo=atual+1;
-        await set(ref(db,'users/'+quemConvidou+'/convitesFeitos'),novo);
-        var jaRec=await get(ref(db,'users/'+quemConvidou+'/convitesRecompensados'));
-        if(novo>=5&&(!jaRec.exists()||!jaRec.val())){
-          await set(ref(db,'users/'+quemConvidou+'/plano'),'premium');
-          await set(ref(db,'users/'+quemConvidou+'/premiumExpira'),Date.now()+(30*24*60*60*1000));
-          await set(ref(db,'users/'+quemConvidou+'/convitesRecompensados'),true);
-        }
+        try{
+          var countSnap=await get(ref(db,'users/'+quemConvidou+'/convitesFeitos'));
+          var atual=countSnap.exists()?countSnap.val():0;
+          var novo=atual+1;
+          await set(ref(db,'users/'+quemConvidou+'/convitesFeitos'),novo);
+          var jaRec=await get(ref(db,'users/'+quemConvidou+'/convitesRecompensados'));
+          if(novo>=5&&(!jaRec.exists()||!jaRec.val())){
+            await set(ref(db,'users/'+quemConvidou+'/plano'),'premium');
+            await set(ref(db,'users/'+quemConvidou+'/premiumExpira'),Date.now()+(30*24*60*60*1000));
+            await set(ref(db,'users/'+quemConvidou+'/convitesRecompensados'),true);
+          }
+        }catch(e){console.log('convite increment',e);}
       }
     }else{
       await signInWithEmailAndPassword(auth,email,pass);
@@ -1130,6 +1133,25 @@ onAuthStateChanged(auth,async function(user){
     try{
       var csnap=await get(ref(db,'users/'+user.uid+'/chats'));
       if(csnap.exists())S.chats=csnap.val();
+      if(S.chatListener){try{S.chatListener()}catch(e){}}
+      S.chatListener=onValue(ref(db,'users/'+user.uid+'/chats'),function(snap){
+        if(!snap.exists())return;
+        var data=snap.val();
+        var changed=false;
+        Object.keys(data).forEach(function(id){
+          if(!S.chats[id]){
+            S.chats[id]=data[id];changed=true;
+          }else{
+            if(JSON.stringify(S.chats[id].messages)!==JSON.stringify(data[id].messages)){
+              S.chats[id]=data[id];changed=true;
+            }
+          }
+        });
+        if(changed){
+          var searchVal=$('chatSearch')?$('chatSearch').value:'';
+          renderList(searchVal);
+        }
+      });
     }catch(e){console.log('chats',e)}
     await loadPlano();
     await loadInvite();
@@ -1155,6 +1177,7 @@ function bindEvents(){
   $('btnTurbinar').addEventListener('click',onTurbinarClick);
   $('planBtn').addEventListener('click',openPay);
   $('fileInput').addEventListener('change',onFileSelected);
+  $('chatSearch').addEventListener('input',function(e){renderList(e.target.value)});
   bindModes();bindInput();
 }
 
@@ -1180,16 +1203,21 @@ function newChat(){
   var id='c_'+Date.now();
   S.chats[id]={id:id,title:'Novo Chat',messages:[],t:Date.now()};
   S.cur=id;save();renderList();renderChat();
+  if($('chatSearch'))$('chatSearch').value='';
 }
 
 function save(){
   if(!S.user)return;
-  try{set(ref(db,'users/'+S.user.uid+'/chats/'+S.cur),S.chats[S.cur])}catch(e){}
+  var c=S.chats[S.cur];
+  if(!c)return;
+  try{
+    set(ref(db,'users/'+S.user.uid+'/chats/'+S.cur),{id:c.id,title:c.title,messages:c.messages,t:c.t});
+  }catch(e){console.log('save error',e)}
 }
 
 function switchChat(id){
   if(S.busy)stopResponse();
-  S.cur=id;renderList();renderChat();
+  S.cur=id;renderList($('chatSearch')?$('chatSearch').value:'');renderChat();
   if(innerWidth<=900)$('sb').classList.remove('op');
 }
 
@@ -1200,12 +1228,20 @@ function delChat(id,e){
   delete S.chats[id];
   if(S.user)try{remove(ref(db,'users/'+S.user.uid+'/chats/'+id))}catch(x){}
   if(S.cur===id){var k=Object.keys(S.chats);if(k.length)S.cur=k[0];else{newChat();return}}
-  renderList();renderChat();
+  renderList($('chatSearch')?$('chatSearch').value:'');renderChat();
 }
 
-function renderList(){
+function renderList(filter){
   var list=$('cl');list.innerHTML='';
   var ids=Object.keys(S.chats).sort(function(a,b){return S.chats[b].t-S.chats[a].t});
+  if(filter){
+    var f=filter.toLowerCase().trim();
+    ids=ids.filter(function(id){return (S.chats[id].title||'').toLowerCase().indexOf(f)>=0;});
+  }
+  if(!ids.length && filter){
+    list.innerHTML='<div class="empty-search">Nenhum chat encontrado</div>';
+    return;
+  }
   ids.forEach(function(id){
     var c=S.chats[id];
     var el=document.createElement('div');
@@ -1330,7 +1366,7 @@ function send(){
 
   if(!hasAttach&&S.mode==='image'){
     if(!canUse('imageGen')){showLimitModal();return}
-    if(c.messages.length===0){c.title='Imagem: '+text.slice(0,30);$('ct').textContent=c.title;renderList()}
+    if(c.messages.length===0){c.title='Imagem: '+text.slice(0,30);$('ct').textContent=c.title;renderList($('chatSearch')?$('chatSearch').value:'')}
     c.messages.push({role:'user',content:text});addMsg('user',text);save();
     incUsage('imageGen');inp.value='';inp.style.height='auto';
     S.busy=true;setBtnState(true);addTyping();
@@ -1340,7 +1376,7 @@ function send(){
 
   if(hasAttach){
     if(!canUse('imgAnalysis')){toast('Limite diário de análise atingido');return}
-    if(c.messages.length===0){c.title='Analise: '+text.slice(0,30);$('ct').textContent=c.title;renderList()}
+    if(c.messages.length===0){c.title='Analise: '+text.slice(0,30);$('ct').textContent=c.title;renderList($('chatSearch')?$('chatSearch').value:'')}
     c.messages.push({role:'user',content:'[Imagem: '+S.attachment.name+']\n\n'+(text||'O que há nesta imagem?')});
     addMsg('user','[Imagem: '+S.attachment.name+']\n\n'+(text||'O que há nesta imagem?'));
     save();incUsage('imgAnalysis');
@@ -1352,7 +1388,7 @@ function send(){
   }
 
   if(!canUse('textChat')){toast('Limite diário de chat atingido');return}
-  if(c.messages.length===0){c.title=text.slice(0,40)+(text.length>40?'…':'');$('ct').textContent=c.title;renderList()}
+  if(c.messages.length===0){c.title=text.slice(0,40)+(text.length>40?'…':'');$('ct').textContent=c.title;renderList($('chatSearch')?$('chatSearch').value:'')}
   c.messages.push({role:'user',content:text});addMsg('user',text);save();
   incUsage('textChat');inp.value='';inp.style.height='auto';
   S.busy=true;setBtnState(true);addTyping();
