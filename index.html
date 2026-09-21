@@ -542,6 +542,25 @@ function iniciarApp(){
   function openSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.add('open');if(o)o.classList.add('on')}
   function closeSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.remove('open');if(o)o.classList.remove('on')}
 
+  // ============ ENVIO DE E-MAIL DE BOAS-VINDAS ============
+  async function sendWelcomeEmail(email, name){
+    try{
+      var res = await fetch(RENDER_URL + '/welcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, name: name })
+      });
+      var data = await res.json();
+      if(data.ok){
+        console.log('[EXILED] E-mail de boas-vindas enviado para', email);
+      } else {
+        console.warn('[EXILED] Erro ao enviar e-mail:', data.error);
+      }
+    }catch(e){
+      console.warn('[EXILED] Falha ao chamar /welcome:', e.message);
+    }
+  }
+
   function applyPlano(){
     var btn=$('planBtn'),title=$('planBtnTitle'),sub=$('planBtnSub'),av=$('av');
     if(!btn)return;
@@ -599,57 +618,26 @@ function iniciarApp(){
 
   function toggleInviteField(){var f=$('inviteField');if(f.style.display==='none'||f.style.display===''){f.style.display='block';$('btnInvite').textContent='Ocultar código'}else{f.style.display='none';$('btnInvite').textContent='Tenho um código de convite'}}
 
-  // === VALIDAÇÃO DE CÓDIGO DE CONVITE - BUSCA EM MÚLTIPLOS LUGARES ===
   async function findUserByInviteCode(codigo){
     codigo=codigo.toUpperCase().trim();
-    console.log('[EXILED] procurando código:',codigo);
-    
-    // Tentativa 1: index direto /convites/{codigo}
-    try{
-      var s=await S.db.get(S.db.ref(S.db.database,'convites/'+codigo));
-      if(s.exists() && s.val().uid){
-        console.log('[EXILED] achou no index /convites:',s.val().uid);
-        return s.val().uid;
-      }
-    }catch(e){console.log('[EXILED] erro tentativa 1:',e.message)}
-    
-    // Tentativa 2: varre todos os users procurando codigoConvite
+    try{var s=await S.db.get(S.db.ref(S.db.database,'convites/'+codigo));if(s.exists()&&s.val().uid)return s.val().uid}catch(e){}
     try{
       var users=await S.db.get(S.db.ref(S.db.database,'users'));
       if(users.exists()){
-        var data=users.val();
-        var found=null;
-        Object.keys(data).forEach(function(u){
-          var user=data[u];
-          if(!user || !user.codigoConvite) return;
-          var codigoSalvo=String(user.codigoConvite).toUpperCase().trim();
-          if(codigoSalvo===codigo){
-            found=u;
-            console.log('[EXILED] achou varrendo users:',u,'codigo:',codigoSalvo);
-          }
-        });
-        if(found) return found;
+        var data=users.val();var found=null;
+        Object.keys(data).forEach(function(u){var user=data[u];if(!user||!user.codigoConvite)return;if(String(user.codigoConvite).toUpperCase().trim()===codigo)found=u});
+        if(found)return found;
       }
-    }catch(e){console.log('[EXILED] erro tentativa 2:',e.message)}
-    
-    // Tentativa 3: percorre /users/UID/codigoConvite individualmente
+    }catch(e){}
     try{
       var users2=await S.db.get(S.db.ref(S.db.database,'users'));
       if(users2.exists()){
         var uids=Object.keys(users2.val());
         for(var i=0;i<uids.length;i++){
-          try{
-            var sn=await S.db.get(S.db.ref(S.db.database,'users/'+uids[i]+'/codigoConvite'));
-            if(sn.exists() && String(sn.val()).toUpperCase().trim()===codigo){
-              console.log('[EXILED] achou na tentativa 3:',uids[i]);
-              return uids[i];
-            }
-          }catch(e){}
+          try{var sn=await S.db.get(S.db.ref(S.db.database,'users/'+uids[i]+'/codigoConvite'));if(sn.exists()&&String(sn.val()).toUpperCase().trim()===codigo)return uids[i]}catch(e){}
         }
       }
-    }catch(e){console.log('[EXILED] erro tentativa 3:',e.message)}
-    
-    console.log('[EXILED] código não encontrado em nenhuma tentativa');
+    }catch(e){}
     return null;
   }
 
@@ -668,13 +656,7 @@ function iniciarApp(){
         if(codigoConvite){
           showLoading('Validando convite...');
           quemConvidou=await findUserByInviteCode(codigoConvite);
-          if(!quemConvidou){
-            $('authErr').textContent='Código de convite inválido: '+codigoConvite;
-            $('btnEmail').disabled=false;
-            hideLoading();
-            return;
-          }
-          console.log('[EXILED] convite válido, padrinho:',quemConvidou);
+          if(!quemConvidou){$('authErr').textContent='Código de convite inválido: '+codigoConvite;$('btnEmail').disabled=false;hideLoading();return}
         }
         var cred=await S.auth.createUserWithEmailAndPassword(S.auth.auth,email,pass);
         await S.auth.updateProfile(cred.user,{displayName:name});
@@ -685,20 +667,23 @@ function iniciarApp(){
         await S.db.set(S.db.ref(S.db.database,'users/'+cred.user.uid+'/convitesFeitos'),0);
         await S.db.set(S.db.ref(S.db.database,'users/'+cred.user.uid+'/convitesRecompensados'),false);
         await S.db.set(S.db.ref(S.db.database,'convites/'+meuCodigo),{uid:cred.user.uid});
+
+        // 👇 ENVIA E-MAIL DE BOAS-VINDAS (silencioso)
+        sendWelcomeEmail(email, name);
+
         if(quemConvidou){
           try{
             var countSnap=await S.db.get(S.db.ref(S.db.database,'users/'+quemConvidou+'/convitesFeitos'));
             var atual=countSnap.exists()?countSnap.val():0;
             var novo=atual+1;
             await S.db.set(S.db.ref(S.db.database,'users/'+quemConvidou+'/convitesFeitos'),novo);
-            console.log('[EXILED] incrementou convites do padrinho pra',novo);
             var jaRec=await S.db.get(S.db.ref(S.db.database,'users/'+quemConvidou+'/convitesRecompensados'));
             if(novo>=5 && (!jaRec.exists()||!jaRec.val())){
               await S.db.set(S.db.ref(S.db.database,'users/'+quemConvidou+'/plano'),'premium');
               await S.db.set(S.db.ref(S.db.database,'users/'+quemConvidou+'/premiumExpira'),Date.now()+(30*24*60*60*1000));
               await S.db.set(S.db.ref(S.db.database,'users/'+quemConvidou+'/convitesRecompensados'),true);
             }
-          }catch(e){console.log('[EXILED] erro increment:',e.message)}
+          }catch(e){console.log('increment',e)}
         }
       }else{
         await S.auth.signInWithEmailAndPassword(S.auth.auth,email,pass);
@@ -855,12 +840,11 @@ function iniciarApp(){
   function rmTyping(){var el=$('tpy');if(el)el.remove()}
   function scrollB(){var a=$('ca');requestAnimationFrame(function(){a.scrollTop=a.scrollHeight})}
 
-  function onSendClick(){if(S.busy){stopResponse();return}send();}
-  function stopResponse(){if(S.abort){try{S.abort.abort()}catch(e){}S.abort=null}S.busy=false;rmTyping();setBtnState(false);$('ui').disabled=false;$('ui').focus();}
+  function onSendClick(){if(S.busy){stopResponse();return}send()}
+  function stopResponse(){if(S.abort){try{S.abort.abort()}catch(e){}S.abort=null}S.busy=false;rmTyping();setBtnState(false);$('ui').disabled=false;$('ui').focus()}
   function setBtnState(busy){var b=$('se');if(!b)return;if(busy){b.classList.add('stop');b.innerHTML=STOP_ICON;$('ui').disabled=true}else{b.classList.remove('stop');b.innerHTML=SEND_ICON;$('ui').disabled=false}}
   function updatePlaceholder(){var inp=$('ui');if(!inp)return;if(S.mode==='image')inp.placeholder='Descreva a imagem que quer gerar...';else if(S.attachment)inp.placeholder='Pergunte sobre a imagem...';else inp.placeholder='Pergunte qualquer coisa...'}
   function clearAttachment(){S.attachment=null;var pw=$('previewWrap');if(pw)pw.innerHTML='';updatePlaceholder()}
-
   function onImgClick(){if(!canUse('imgAnalysis')){toast('Limite diário de análise atingido');return}$('fileInput').click()}
   function onGenImgClick(){if(!canUse('imageGen')){showLimitModal();return}if(S.busy)stopResponse();S.mode='image';$('cs').textContent=M.image.sub;updateModes();updatePlaceholder();$('ui').focus()}
   function onFileSelected(e){
@@ -1202,6 +1186,8 @@ function iniciarApp(){
               await dbMod.set(dbMod.ref(db,'users/'+user.uid+'/convitesFeitos'),0);
               await dbMod.set(dbMod.ref(db,'users/'+user.uid+'/convitesRecompensados'),false);
               await dbMod.set(dbMod.ref(db,'convites/'+meuCod),{uid:user.uid});
+              // 👇 ENVIA E-MAIL DE BOAS-VINDAS PRO LOGIN GOOGLE
+              sendWelcomeEmail(S.user.email, S.user.name);
             }else{var p=snap.val();if(p.name)S.user.name=p.name}
           }catch(e){console.log('profile',e)}
           try{
@@ -1236,7 +1222,7 @@ function iniciarApp(){
           var login=$('login');if(login)login.style.display='flex';
         }
       });
-    }catch(e){console.log('Erro Firebase:',e);alert('Erro ao carregar Firebase: '+e.message)}
+    }catch(e){console.log('Erro Firebase:',e)}
   }
 
   initFirebase();
