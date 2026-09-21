@@ -141,6 +141,16 @@ input:focus{border-color:#555;background:var(--bg3)}
 .ty span:nth-child(2){animation-delay:.2s}
 .ty span:nth-child(3){animation-delay:.4s}
 @keyframes bn{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+.thinking{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:14px;color:#bbb}
+.thinking-icon{width:22px;height:22px;position:relative;flex-shrink:0}
+.thinking-icon svg{width:22px;height:22px;stroke:#bbb;stroke-width:2;fill:none;animation:spin-think 2s linear infinite}
+@keyframes spin-think{to{transform:rotate(360deg)}}
+.thinking-text{animation:pulse-think 1.6s ease-in-out infinite}
+.thinking-text span{display:inline-block;animation:pulse-dot 1.6s ease-in-out infinite}
+.thinking-text span:nth-child(2){animation-delay:.15s}
+.thinking-text span:nth-child(3){animation-delay:.3s}
+@keyframes pulse-think{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes pulse-dot{0%,100%{opacity:.3}50%{opacity:1}}
 .iw{padding:12px 16px 16px;background:linear-gradient(to top,#000 40%,transparent)}
 .ibx{max-width:820px;margin:0 auto;background:var(--bg1);border:1px solid var(--bd2);border-radius:16px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:8px}
 .ibx textarea{flex:1;background:none;border:none;color:#fff;font-size:14px;resize:none;outline:none;max-height:120px;line-height:1.5;padding:8px 0}
@@ -511,17 +521,18 @@ function iniciarApp(){
   var STT_MODEL='whisper-large-v3-turbo';
   var RENDER_URL='https://exiled-bot.onrender.com';
   var PIX_KEY='sampteken@gmail.com';
+  var DISCORD_CLIENT_ID='1551457039346049044';
   var LIMITS={imgAnalysis:5,transcribe:20,imageGen:6,textChat:100};
   var LS={lim:'exlim'};
 
   var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0,chatListener:null,db:null,auth:null};
 
   var M={
-    normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.'},
-    code:{model:'openai/gpt-oss-120b',temp:.4,sub:'Especialista em código',p:'Você é a EXILED AI no modo CÓDIGO. Regras OBRIGATÓRIAS:\n1. NUNCA use HTML entities dentro de strings JavaScript. Use aspas normais.\n2. NUNCA escape caracteres com barra invertida. Use template literals ou concatenação.\n3. Sempre entregue o código COMPLETO num bloco começando com <!DOCTYPE html> e terminando com </html>.\n4. Código limpo, indentado.\n5. Se pedir jogo/página, entregue tudo num arquivo único funcional.\n6. Comente partes importantes.\n7. Explique brevemente DEPOIS do bloco.\nResponda em português brasileiro.'},
-    fast:{model:'openai/gpt-oss-20b',temp:.6,sub:'Respostas rápidas',p:'Você é a EXILED AI no modo RÁPIDO. Seja concisa. Português brasileiro.'},
-    think:{model:'openai/gpt-oss-120b',temp:.5,sub:'Pensar profundo',p:'Você é a EXILED AI no modo PENSAR. Analise com cuidado. Português brasileiro.'},
-    image:{model:'agnes-image-2.0-flash',temp:0,sub:'Gerar imagens com IA',p:''}
+    normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.',delay:1500,thinkText:''},
+    code:{model:'openai/gpt-oss-120b',temp:.4,sub:'Especialista em código',p:'Você é a EXILED AI no modo CÓDIGO. Regras OBRIGATÓRIAS:\n1. NUNCA use HTML entities dentro de strings JavaScript. Use aspas normais.\n2. NUNCA escape caracteres com barra invertida. Use template literals ou concatenação.\n3. Sempre entregue o código COMPLETO num bloco começando com <!DOCTYPE html> e terminando com </html>.\n4. Código limpo, indentado.\n5. Se pedir jogo/página, entregue tudo num arquivo único funcional.\n6. Comente partes importantes.\n7. Explique brevemente DEPOIS do bloco.\nResponda em português brasileiro.',delay:2000,thinkText:''},
+    fast:{model:'openai/gpt-oss-20b',temp:.6,sub:'Respostas rápidas',p:'Você é a EXILED AI no modo RÁPIDO. Seja concisa. Português brasileiro.',delay:0,thinkText:''},
+    think:{model:'openai/gpt-oss-120b',temp:.5,sub:'Pensar profundo',p:'Você é a EXILED AI no modo PENSAR. Analise com cuidado antes de responder. Português brasileiro.',delay:4000,thinkText:'Pensando profundamente'},
+    image:{model:'agnes-image-2.0-flash',temp:0,sub:'Gerar imagens com IA',p:'',delay:0,thinkText:''}
   };
 
   var SEND_ICON='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
@@ -548,26 +559,15 @@ function iniciarApp(){
   function openSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.add('open');if(o)o.classList.add('on')}
   function closeSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.remove('open');if(o)o.classList.remove('on')}
 
-  // ============ ENVIO DE E-MAIL DE BOAS-VINDAS ============
   async function sendWelcomeEmail(email, name){
     try{
-      var res = await fetch(RENDER_URL + '/welcome', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, name: name })
-      });
+      var res = await fetch(RENDER_URL + '/welcome', {method: 'POST',headers: { 'Content-Type': 'application/json' },body: JSON.stringify({ email: email, name: name })});
       var data = await res.json();
-      if(data.ok){
-        console.log('[EXILED] E-mail de boas-vindas enviado para', email);
-      } else {
-        console.warn('[EXILED] Erro ao enviar e-mail:', data.error);
-      }
-    }catch(e){
-      console.warn('[EXILED] Falha ao chamar /welcome:', e.message);
-    }
+      if(data.ok)console.log('[EXILED] E-mail enviado para', email);
+      else console.warn('[EXILED] Erro e-mail:', data.error);
+    }catch(e){console.warn('[EXILED] /welcome falhou:', e.message)}
   }
 
-  // ============ DOWNLOAD LOCAL DE IMAGEM ============
   async function downloadImage(url, filename){
     try{
       var res = await fetch(url);
@@ -581,7 +581,6 @@ function iniciarApp(){
       document.body.removeChild(a);
       setTimeout(function(){ URL.revokeObjectURL(localUrl); }, 1000);
     }catch(e){
-      console.warn('[EXILED] Download via fetch falhou, tentando link direto:', e.message);
       var a2 = document.createElement('a');
       a2.href = url;
       a2.download = filename || 'exiled-'+Date.now()+'.png';
@@ -745,71 +744,63 @@ function iniciarApp(){
     }
   }
 
-  // ============ LOGIN COM DISCORD (via OAuth2 Redirect) ============
-  var DISCORD_CLIENT_ID = 'SEU_CLIENT_ID_AQUI';
-  var DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname + '?discord_callback=1';
-
+  // ============ LOGIN COM DISCORD ============
   function doDiscordAuth(){
     $('authErr').textContent='';
-    // Verifica se o client ID foi configurado
-    if(DISCORD_CLIENT_ID === 'SEU_CLIENT_ID_AQUI'){
-      $('authErr').textContent = 'Login com Discord ainda não configurado.';
+    if(!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID==='SEU_CLIENT_ID_AQUI'){
+      $('authErr').textContent='Login com Discord não configurado';
       return;
     }
-    // Gera state aleatório pra proteção CSRF
-    var state = 'dc_' + Math.random().toString(36).slice(2,12);
-    try{ localStorage.setItem('discord_state', state); }catch(e){}
-    var params = new URLSearchParams({
-      client_id: DISCORD_CLIENT_ID,
-      redirect_uri: DISCORD_REDIRECT_URI,
-      response_type: 'code',
-      scope: 'identify email',
-      state: state
+    var state='dc_'+Math.random().toString(36).slice(2,12);
+    try{localStorage.setItem('discord_state',state)}catch(e){}
+    var redirectUri=window.location.origin+window.location.pathname;
+    var params=new URLSearchParams({
+      client_id:DISCORD_CLIENT_ID,
+      redirect_uri:redirectUri,
+      response_type:'code',
+      scope:'identify email',
+      state:state
     });
-    window.location.href = 'https://discord.com/oauth2/authorize?' + params.toString();
+    window.location.href='https://discord.com/oauth2/authorize?'+params.toString();
   }
 
   async function handleDiscordCallback(){
-    // Pega o code da URL
-    var urlParams = new URLSearchParams(window.location.search);
-    var code = urlParams.get('code');
-    var state = urlParams.get('state');
-    if(!code) return false;
+    var urlParams=new URLSearchParams(window.location.search);
+    var code=urlParams.get('code');
+    var state=urlParams.get('state');
+    if(!code)return false;
 
-    // Valida state
-    var savedState = null;
-    try{ savedState = localStorage.getItem('discord_state'); }catch(e){}
-    if(savedState && state !== savedState){
-      $('authErr').textContent = 'State inválido. Tente novamente.';
+    var savedState=null;
+    try{savedState=localStorage.getItem('discord_state')}catch(e){}
+    if(savedState && state && state!==savedState){
+      $('authErr').textContent='State inválido. Tente novamente.';
       return true;
     }
 
-    // Envia pro servidor (Render) trocar code por token e criar sessão
     try{
       showLoading('Conectando com Discord...');
-      var res = await fetch(RENDER_URL + '/discord/callback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code, redirect_uri: DISCORD_REDIRECT_URI })
+      var redirectUri=window.location.origin+window.location.pathname;
+      var res=await fetch(RENDER_URL+'/discord/callback',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({code:code,redirect_uri:redirectUri})
       });
-      var data = await res.json();
+      var data=await res.json();
       hideLoading();
 
       if(!data.ok){
-        $('authErr').textContent = data.error || 'Falha no login com Discord';
+        $('authErr').textContent=data.error||'Falha no login com Discord';
         return true;
       }
 
-      // Cria a conta no Firebase usando um email fictício fornecido pelo servidor
-      // (o servidor cria um custom token e o app faz signInWithCustomToken)
       if(data.customToken){
-        await S.auth.signInWithCustomToken(S.auth.auth, data.customToken);
-      } else {
-        $('authErr').textContent = 'Token do Discord inválido';
+        await S.auth.signInWithCustomToken(S.auth.auth,data.customToken);
+      }else{
+        $('authErr').textContent='Token do Discord inválido';
       }
     }catch(e){
       hideLoading();
-      $('authErr').textContent = 'Erro: ' + e.message;
+      $('authErr').textContent='Erro: '+e.message;
     }
     return true;
   }
@@ -929,9 +920,16 @@ function iniciarApp(){
   function addTyping(){
     var cin=$('cin');
     var w=cin.querySelector('.wc');if(w)w.remove();
+    var mode=M[S.mode];
     var el=document.createElement('div');
     el.className='mg ma';el.id='tpy';
-    el.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><div class="ct"><div class="ty"><span></span><span></span><span></span></div></div>';
+    var inner;
+    if(mode.thinkText){
+      inner='<div class="ct"><div class="thinking"><div class="thinking-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></div><span class="thinking-text">'+mode.thinkText+'<span>.</span><span>.</span><span>.</span></span></div></div>';
+    } else {
+      inner='<div class="ct"><div class="ty"><span></span><span></span><span></span></div></div>';
+    }
+    el.innerHTML='<div class="ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>'+inner;
     cin.appendChild(el);scrollB();
   }
 
@@ -999,8 +997,21 @@ function iniciarApp(){
 
     fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:m.model,messages:msgs,temperature:m.temp,max_tokens:4096}),signal:ctrl.signal})
       .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
-      .then(function(d){rmTyping();var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';c.messages.push({role:'assistant',content:rep});addMsg('assistant',rep);save();scrollB();})
-      .catch(function(err){rmTyping();if(err.name==='AbortError'){addMsg('assistant','Resposta interrompida.');scrollB()}else{addMsg('assistant','Erro: '+esc(err.message));scrollB()}})
+      .then(function(d){
+        var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
+        // Delay artificial por modo (só visual)
+        var delay=m.delay||0;
+        setTimeout(function(){
+          rmTyping();
+          c.messages.push({role:'assistant',content:rep});
+          addMsg('assistant',rep);save();scrollB();
+        }, delay);
+      })
+      .catch(function(err){
+        rmTyping();
+        if(err.name==='AbortError'){addMsg('assistant','Resposta interrompida.');scrollB()}
+        else{addMsg('assistant','Erro: '+esc(err.message));scrollB()}
+      })
       .then(function(){S.abort=null;S.busy=false;setBtnState(false);inp.focus()});
   }
 
@@ -1269,11 +1280,10 @@ function iniciarApp(){
 
       S.db = {database:db,ref:dbMod.ref,set:dbMod.set,get:dbMod.get,remove:dbMod.remove,onValue:dbMod.onValue};
 
-      // Trata callback do Discord (se voltou com ?code=...)
-      var isDiscordCallback = window.location.search.indexOf('discord_callback=1')>=0 || window.location.search.indexOf('code=')>=0;
+      // Trata callback do Discord
+      var isDiscordCallback = window.location.search.indexOf('code=')>=0;
       if(isDiscordCallback){
         await handleDiscordCallback();
-        // Limpa a URL
         try{ window.history.replaceState({}, document.title, window.location.pathname); }catch(e){}
       }
 
@@ -1281,7 +1291,7 @@ function iniciarApp(){
 
       authMod.onAuthStateChanged(auth,async function(user){
         if(user){
-          S.user={uid:user.uid,name:user.displayName||user.email.split('@')[0],email:user.email,photo:user.photoURL||''};
+          S.user={uid:user.uid,name:user.displayName||user.email?user.email.split('@')[0]:'Usuário',email:user.email||'',photo:user.photoURL||''};
           showLoading('Carregando perfil...');
           try{
             var snap=await dbMod.get(dbMod.ref(db,'users/'+user.uid+'/profile'));
@@ -1293,8 +1303,8 @@ function iniciarApp(){
               await dbMod.set(dbMod.ref(db,'users/'+user.uid+'/convitesFeitos'),0);
               await dbMod.set(dbMod.ref(db,'users/'+user.uid+'/convitesRecompensados'),false);
               await dbMod.set(dbMod.ref(db,'convites/'+meuCod),{uid:user.uid});
-              sendWelcomeEmail(S.user.email, S.user.name);
-            }else{var p=snap.val();if(p.name)S.user.name=p.name}
+              if(S.user.email)sendWelcomeEmail(S.user.email, S.user.name);
+            }else{var p=snap.val();if(p.name)S.user.name=p.name;if(p.email)S.user.email=p.email}
           }catch(e){console.log('profile',e)}
           try{
             var csnap=await dbMod.get(dbMod.ref(db,'users/'+user.uid+'/chats'));
