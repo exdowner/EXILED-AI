@@ -512,11 +512,9 @@ window.addEventListener('DOMContentLoaded',function(){
 });
 
 function iniciarApp(){
-  var GROQ_KEY='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';
-  var GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
-  var GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
-  var AGNES_KEY='sk-YHIGwJKI72lqvP0JBiIpdETWIM5qwdjt5Hq2zUq41A66pNf4';
-  var AGNES_URL='https://apihub.agnes-ai.com/v1/images/generations';
+  var GROQ_URL='https://exiled-bot.onrender.com/groq/chat';
+  var GROQ_STT='https://exiled-bot.onrender.com/groq/stt';
+  var AGNES_URL='https://exiled-bot.onrender.com/agnes/image';
   var VISION_MODEL='qwen/qwen3.6-27b';
   var STT_MODEL='whisper-large-v3-turbo';
   var RENDER_URL='https://exiled-bot.onrender.com';
@@ -525,7 +523,7 @@ function iniciarApp(){
   var LIMITS={imgAnalysis:5,transcribe:20,imageGen:6,textChat:100};
   var LS={lim:'exlim'};
 
-  var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0,chatListener:null,db:null,auth:null};
+  var S={user:null,plano:'free',chats:{},cur:null,mode:'normal',busy:false,abort:null,attachment:null,recording:false,recorder:null,audioChunks:[],authMode:'login',previewCode:'',payAttachment:null,inviteCode:'',inviteCount:0,chatListener:null,db:null,auth:null,userEmailManual:null};
 
   var M={
     normal:{model:'openai/gpt-oss-120b',temp:.7,sub:'Pronto para ajudar',p:'Você é a EXILED AI, assistente inteligente e amigável. Responda em português brasileiro. Use markdown quando fizer sentido.',delay:1500,thinkText:''},
@@ -633,7 +631,8 @@ function iniciarApp(){
     if(S.plano==='premium'){toast('Você já é Premium!');return}
     $('modalPay').classList.add('on');
     $('payContent').style.display='block';$('paySuccess').style.display='none';$('payErr').textContent='';
-    $('payName').value=S.user?S.user.name:'';$('payEmail').value=S.user?S.user.email:'';
+    $('payName').value=S.user?S.user.name:'';
+    $('payEmail').value=S.userEmailManual || (S.user?S.user.email:'');
     $('pixKeyText').textContent=PIX_KEY;S.payAttachment=null;
     $('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value='';
   }
@@ -744,24 +743,18 @@ function iniciarApp(){
     }
   }
 
-  // ============ LOGIN COM DISCORD ============
   function doDiscordAuth(){
     $('authErr').textContent='';
-    if(!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID==='SEU_CLIENT_ID_AQUI'){
-      $('authErr').textContent='Login com Discord não configurado';
-      return;
-    }
+    if(!DISCORD_CLIENT_ID) return;
     var state='dc_'+Math.random().toString(36).slice(2,12);
     try{localStorage.setItem('discord_state',state)}catch(e){}
     var redirectUri=window.location.origin+window.location.pathname;
-    var params=new URLSearchParams({
-      client_id:DISCORD_CLIENT_ID,
-      redirect_uri:redirectUri,
-      response_type:'code',
-      scope:'identify email',
-      state:state
-    });
-    window.location.href='https://discord.com/oauth2/authorize?'+params.toString();
+    var params=new URLSearchParams({client_id:DISCORD_CLIENT_ID,redirect_uri:redirectUri,response_type:'code',scope:'identify email',state:state});
+    // Abre em nova janela/popup (funciona no mobile abrindo o navegador nativo)
+    var popup=window.open('https://discord.com/oauth2/authorize?'+params.toString(),'discord_oauth','width=500,height=700,scrollbars=yes,resizable=yes');
+    if(!popup || popup.closed || typeof popup.closed==='undefined'){
+      $('authErr').textContent='Popup bloqueado. Permita popups pra continuar.';
+    }
   }
 
   async function handleDiscordCallback(){
@@ -769,14 +762,12 @@ function iniciarApp(){
     var code=urlParams.get('code');
     var state=urlParams.get('state');
     if(!code)return false;
-
     var savedState=null;
     try{savedState=localStorage.getItem('discord_state')}catch(e){}
     if(savedState && state && state!==savedState){
       $('authErr').textContent='State inválido. Tente novamente.';
       return true;
     }
-
     try{
       showLoading('Conectando com Discord...');
       var redirectUri=window.location.origin+window.location.pathname;
@@ -787,12 +778,10 @@ function iniciarApp(){
       });
       var data=await res.json();
       hideLoading();
-
       if(!data.ok){
         $('authErr').textContent=data.error||'Falha no login com Discord';
         return true;
       }
-
       if(data.customToken){
         await S.auth.signInWithCustomToken(S.auth.auth,data.customToken);
       }else{
@@ -995,11 +984,10 @@ function iniciarApp(){
     var m=M[S.mode];
     var msgs=[{role:'system',content:m.p}].concat(c.messages.map(function(x){return {role:x.role,content:x.content}}));
 
-    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:m.model,messages:msgs,temperature:m.temp,max_tokens:4096}),signal:ctrl.signal})
+    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:m.model,messages:msgs,temperature:m.temp,max_tokens:4096}),signal:ctrl.signal})
       .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
       .then(function(d){
         var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';
-        // Delay artificial por modo (só visual)
         var delay=m.delay||0;
         setTimeout(function(){
           rmTyping();
@@ -1019,7 +1007,7 @@ function iniciarApp(){
     var ctrl=new AbortController();S.abort=ctrl;
     var history=c.messages.slice(0,-1).map(function(x){return {role:x.role,content:x.content}});
     var msgs=[{role:'system',content:'Você é a EXILED AI. Analise a imagem em português brasileiro.'}].concat(history).concat([{role:'user',content:[{type:'text',text:prompt},{type:'image_url',image_url:{url:att.data}}]}]);
-    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:VISION_MODEL,messages:msgs,temperature:.7,max_tokens:2048}),signal:ctrl.signal})
+    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:VISION_MODEL,messages:msgs,temperature:.7,max_tokens:2048}),signal:ctrl.signal})
       .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
       .then(function(d){rmTyping();var rep=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'(vazio)';c.messages.push({role:'assistant',content:rep});addMsg('assistant',rep);save();scrollB();})
       .catch(function(err){rmTyping();if(err.name==='AbortError'){addMsg('assistant','Análise interrompida.');scrollB()}else{addMsg('assistant','Erro: '+esc(err.message));scrollB()}})
@@ -1028,7 +1016,7 @@ function iniciarApp(){
 
   function generateAgnesImage(prompt,c){
     var ctrl=new AbortController();S.abort=ctrl;
-    fetch(AGNES_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+AGNES_KEY},body:JSON.stringify({model:'agnes-image-2.0-flash',prompt:prompt,size:'1024x1024',extra_body:{response_format:'url'}}),signal:ctrl.signal})
+    fetch(AGNES_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'agnes-image-2.0-flash',prompt:prompt,size:'1024x1024',extra_body:{response_format:'url'}}),signal:ctrl.signal})
       .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
       .then(function(data){
         rmTyping();
@@ -1070,7 +1058,7 @@ function iniciarApp(){
     var fd=new FormData();
     fd.append('file',blob,'audio.webm');fd.append('model',STT_MODEL);fd.append('language','pt');fd.append('response_format','json');
     try{
-      var r=await fetch(GROQ_STT,{method:'POST',headers:{'Authorization':'Bearer '+GROQ_KEY},body:fd});
+      var r=await fetch(GROQ_STT,{method:'POST',body:fd});
       if(!r.ok){var t=await r.text();throw new Error('HTTP '+r.status+': '+t)}
       var d=await r.json();var txt=(d.text||'').trim();
       if(txt){inp.value=(prev?prev+' ':'')+txt;inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';incUsage('transcribe');toast('Transcrito!')}
@@ -1085,7 +1073,7 @@ function iniciarApp(){
     var btn=$('btnTurbinar');btn.disabled=true;
     $('turboText').value='Turbinando...';$('modalTurbo').classList.add('on');
     var sys='Você é um especialista em prompts para geração de imagem. O usuário vai te dar um prompt curto em português. Reescreva em INGLÊS, profissional, adicionando detalhes de: composição, iluminação, estilo, paleta de cores, qualidade e câmera. Responda APENAS com o prompt final, sem explicações, sem aspas, sem markdown.';
-    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:'openai/gpt-oss-120b',messages:[{role:'system',content:sys},{role:'user',content:text}],temperature:.7,max_tokens:300})})
+    fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'openai/gpt-oss-120b',messages:[{role:'system',content:sys},{role:'user',content:text}],temperature:.7,max_tokens:300})})
       .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t)});return r.json()})
       .then(function(d){var out=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||text;$('turboText').value=out.trim()})
       .catch(function(e){$('turboText').value=text;toast('Erro ao turbinar: '+e.message)})
@@ -1223,6 +1211,7 @@ function iniciarApp(){
     var nome=$('payName').value.trim();var email=$('payEmail').value.trim();
     if(!nome){$('payErr').textContent='Digite seu nome';return}
     if(!S.payAttachment){$('payErr').textContent='Anexe o comprovante';return}
+    if(!email){$('payErr').textContent='Digite seu email';return}
     $('payErr').textContent='';psb.disabled=true;psb.textContent='Enviando...';
     try{
       var res=await fetch(RENDER_URL+'/comprovante',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:S.user.uid,nome:nome,email:email,imagemBase64:S.payAttachment.data})});
@@ -1280,7 +1269,6 @@ function iniciarApp(){
 
       S.db = {database:db,ref:dbMod.ref,set:dbMod.set,get:dbMod.get,remove:dbMod.remove,onValue:dbMod.onValue};
 
-      // Trata callback do Discord
       var isDiscordCallback = window.location.search.indexOf('code=')>=0;
       if(isDiscordCallback){
         await handleDiscordCallback();
@@ -1304,7 +1292,7 @@ function iniciarApp(){
               await dbMod.set(dbMod.ref(db,'users/'+user.uid+'/convitesRecompensados'),false);
               await dbMod.set(dbMod.ref(db,'convites/'+meuCod),{uid:user.uid});
               if(S.user.email)sendWelcomeEmail(S.user.email, S.user.name);
-            }else{var p=snap.val();if(p.name)S.user.name=p.name;if(p.email)S.user.email=p.email}
+            }else{var p=snap.val();if(p.name)S.user.name=p.name;if(p.email)S.user.email=p.email;if(p.emailManual)S.userEmailManual=p.emailManual}
           }catch(e){console.log('profile',e)}
           try{
             var csnap=await dbMod.get(dbMod.ref(db,'users/'+user.uid+'/chats'));
@@ -1342,6 +1330,25 @@ function iniciarApp(){
   }
 
   initFirebase();
+
+  // ============ BLOQUEIOS DE DEVTOOLS ============
+  (function(){
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+        (e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P')) ||
+        (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))){
+        e.preventDefault();e.stopPropagation();return false;
+      }
+    }, true);
+    document.addEventListener('contextmenu', function(e){e.preventDefault();return false});
+    document.addEventListener('selectstart', function(e){
+      var t=e.target;
+      if(t.closest('.chat-area') || t.closest('textarea') || t.closest('input')) return true;
+      e.preventDefault();return false;
+    });
+    document.addEventListener('dragstart', function(e){if(e.target.tagName === 'IMG') e.preventDefault()});
+  })();
 }
 </script>
 </body>
