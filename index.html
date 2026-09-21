@@ -9,7 +9,6 @@
   window.addEventListener('DOMContentLoaded', function(){
     if(typeof eruda !== 'undefined'){
       eruda.init();
-      eruda.position({x: 10, y: 10});
     }
   });
 </script>
@@ -564,14 +563,12 @@ input:focus{border-color:#555;background:var(--bg3)}
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ INICIA DEPOIS DO DOM ============
 window.addEventListener('DOMContentLoaded',function(){
   console.log('[EXILED] DOM pronto, iniciando...');
   setTimeout(iniciarApp, 100);
 });
 
 function iniciarApp(){
-  // ===== CONFIG =====
   var GROQ_KEY='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';
   var GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
   var GROQ_STT='https://api.groq.com/openai/v1/audio/transcriptions';
@@ -617,6 +614,21 @@ function iniciarApp(){
   function showLimitModal(){$('limitCount').textContent=limiteBase('imageGen');$('modalLimit').classList.add('on')}
   function openSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.add('open');if(o)o.classList.add('on')}
   function closeSidebar(){var s=$('sb'),o=$('sbOverlay');if(s)s.classList.remove('open');if(o)o.classList.remove('on')}
+
+  // ===== NORMALIZA CHAT (garante que tem messages/title/t) =====
+  function normalizaChat(c,id){
+    if(!c)c={};
+    if(!c.id)c.id=id||('c_'+Date.now());
+    if(!c.title)c.title='Novo Chat';
+    if(!c.messages||!Array.isArray(c.messages))c.messages=[];
+    if(!c.t)c.t=Date.now();
+    return c;
+  }
+  function normalizaTodosChats(){
+    Object.keys(S.chats).forEach(function(id){
+      S.chats[id]=normalizaChat(S.chats[id],id);
+    });
+  }
 
   function applyPlano(){
     var btn=$('planBtn'),title=$('planBtnTitle'),sub=$('planBtnSub'),av=$('av');
@@ -767,6 +779,7 @@ function iniciarApp(){
     $('ue').textContent=S.user.email;
     if(S.user.photo)$('av').innerHTML='<img src="'+esc(S.user.photo)+'" alt="">';
     else $('av').textContent=S.user.name.charAt(0).toUpperCase();
+    normalizaTodosChats();
     if(!S.cur||!S.chats[S.cur])newChat();
     else{renderList();renderChat()}
     updateModes();updatePlaceholder();applyPlano();
@@ -780,7 +793,7 @@ function iniciarApp(){
 
   function newChat(){
     var id='c_'+Date.now();
-    S.chats[id]={id:id,title:'Novo Chat',messages:[],t:Date.now()};
+    S.chats[id]=normalizaChat({id:id,title:'Novo Chat',messages:[],t:Date.now()},id);
     S.cur=id;save();renderList();renderChat();
     if($('chatSearch'))$('chatSearch').value='';
     if(innerWidth<=900)closeSidebar();
@@ -789,6 +802,8 @@ function iniciarApp(){
   function save(){
     if(!S.user||!S.db)return;
     var c=S.chats[S.cur];if(!c)return;
+    c=normalizaChat(c,S.cur);
+    S.chats[S.cur]=c;
     try{S.db.set(S.db.ref(S.db.database,'users/'+S.user.uid+'/chats/'+S.cur),{id:c.id,title:c.title,messages:c.messages,t:c.t})}catch(e){console.log('save',e)}
   }
 
@@ -810,6 +825,7 @@ function iniciarApp(){
 
   function renderList(filter){
     var list=$('cl');if(!list)return;list.innerHTML='';
+    normalizaTodosChats();
     var ids=Object.keys(S.chats).sort(function(a,b){return S.chats[b].t-S.chats[a].t});
     if(filter){var f=filter.toLowerCase().trim();ids=ids.filter(function(id){return (S.chats[id].title||'').toLowerCase().indexOf(f)>=0})}
     if(!ids.length && filter){list.innerHTML='<div class="empty-search">Nenhum chat encontrado</div>';return}
@@ -826,6 +842,7 @@ function iniciarApp(){
 
   function renderChat(){
     var c=S.chats[S.cur];if(!c)return;
+    c=normalizaChat(c,S.cur);S.chats[S.cur]=c;
     $('ct').textContent=c.title;
     $('cs').textContent=M[S.mode].sub;
     updatePlaceholder();
@@ -944,6 +961,8 @@ function iniciarApp(){
     if(!text&&!hasAttach){toast('Digite algo primeiro');return}
     var c=S.chats[S.cur];
     if(!c){newChat();c=S.chats[S.cur];if(!c){toast('Erro: chat não criado');return}}
+    c=normalizaChat(c,S.cur);
+    S.chats[S.cur]=c;
 
     if(!hasAttach&&S.mode==='image'){
       if(!canUse('imageGen')){showLimitModal();return}
@@ -1145,9 +1164,7 @@ function iniciarApp(){
 
   function updateModes(){document.querySelectorAll('.mb').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')===S.mode)})}
 
-  // ===== BIND EVENTOS =====
-  function on(id,ev,fn){var el=$(id);if(el){el.addEventListener(ev,fn)}else{console.log('MISSING',id)}}
-  function click(id,fn){var el=$(id);if(el){el.onclick=fn;console.log('BIND OK',id)}else{console.log('MISSING',id)}}
+  function click(id,fn){var el=$(id);if(el){el.onclick=fn}else{console.log('MISSING',id)}}
 
   click('btnEmail',doEmailAuth);
   click('btnGoogle',doGoogleAuth);
@@ -1322,7 +1339,6 @@ function iniciarApp(){
 
   console.log('[EXILED] eventos anexados!');
 
-  // ===== FIREBASE =====
   async function initFirebase(){
     console.log('[EXILED] carregando Firebase...');
     try{
@@ -1384,13 +1400,14 @@ function iniciarApp(){
           try{
             var csnap=await dbMod.get(dbMod.ref(db,'users/'+user.uid+'/chats'));
             if(csnap.exists())S.chats=csnap.val();
+            normalizaTodosChats();
             if(S.chatListener){try{S.chatListener()}catch(e){}}
             S.chatListener=dbMod.onValue(dbMod.ref(db,'users/'+user.uid+'/chats'),function(snap){
               if(!snap.exists())return;
               var data=snap.val();var changed=false;
               Object.keys(data).forEach(function(id){
-                if(!S.chats[id]){S.chats[id]=data[id];changed=true}
-                else if(JSON.stringify(S.chats[id].messages)!==JSON.stringify(data[id].messages)){S.chats[id]=data[id];changed=true}
+                if(!S.chats[id]){S.chats[id]=normalizaChat(data[id],id);changed=true}
+                else if(JSON.stringify(S.chats[id].messages)!==JSON.stringify(data[id].messages)){S.chats[id]=normalizaChat(data[id],id);changed=true}
               });
               if(changed)renderList($('chatSearch')?$('chatSearch').value:'');
             });
