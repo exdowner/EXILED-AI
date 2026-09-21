@@ -1136,258 +1136,381 @@ function md(text){
   return html;
 }
 
-// ============ BIND EVENTOS (AGORA DEPOIS DO DOM) ============
+// ============ BIND EVENTOS (CORRIGIDO) ============
 function attachAll(){
   console.log('[EXILED] Anexando eventos...');
   
-  function on(id,ev,fn){var el=document.getElementById(id);if(el){el.addEventListener(ev,fn);console.log('OK',id,ev)}else{console.log('MISSING',id)}}
-  function onClick(id,fn){var el=document.getElementById(id);if(el){el.onclick=fn;el.addEventListener('touchend',function(e){e.preventDefault();fn.call(el,e)},{passive:false});console.log('OK',id)}else{console.log('MISSING',id)}}
+  // Função de clique CORRIGIDA (sem touchend + preventDefault que quebrava o botão)
+  function onClick(id, fn) {
+    const el = document.getElementById(id);
+    if (!el) {
+      console.warn('MISSING element:', id);
+      return;
+    }
+    el.addEventListener('click', fn);
+    console.log('OK', id);
+  }
 
-  onClick('bl',doLoginNotUsed);
-  onClick('btnEmail',doEmailAuth);
-  onClick('btnGoogle',doGoogleAuth);
-  onClick('toggleMode',function(){
-    S.authMode=S.authMode==='login'?'signup':'login';
-    var isSignup=S.authMode==='signup';
-    $('signupFields').style.display=isSignup?'block':'none';
-    $('btnInvite').style.display=isSignup?'block':'none';
-    if(!isSignup){$('inviteField').style.display='none';$('btnInvite').textContent='Tenho um código de convite'}
-    $('btnEmail').textContent=isSignup?'Criar conta':'Entrar';
-    $('toggleMode').textContent=isSignup?'Já tem conta? Entrar':'Não tem conta? Criar conta';
-    $('authErr').textContent='';
+  onClick('btnEmail', doEmailAuth);
+  onClick('btnGoogle', doGoogleAuth);
+  onClick('toggleMode', function(){
+    S.authMode = S.authMode === 'login' ? 'signup' : 'login';
+    var isSignup = S.authMode === 'signup';
+    $('signupFields').style.display = isSignup ? 'block' : 'none';
+    $('btnInvite').style.display = isSignup ? 'block' : 'none';
+    if (!isSignup) {
+      $('inviteField').style.display = 'none';
+      $('btnInvite').textContent = 'Tenho um código de convite';
+    }
+    $('btnEmail').textContent = isSignup ? 'Criar conta' : 'Entrar';
+    $('toggleMode').textContent = isSignup ? 'Já tem conta? Entrar' : 'Não tem conta? Criar conta';
+    $('authErr').textContent = '';
   });
-  onClick('btnInvite',toggleInviteField);
-  onClick('nn',newChat);
-  onClick('lo',logout);
-  onClick('stg',openSettings);
-  onClick('inviteBtn',openInvite);
-  onClick('se',onSendClick);
-  onClick('tg',openSidebar);
-  onClick('sbClose',closeSidebar);
-  onClick('sbOverlay',closeSidebar);
-  onClick('btnImg',onImgClick);
-  onClick('btnMic',onMicClick);
-  onClick('btnGenImg',onGenImgClick);
-  onClick('btnTurbinar',onTurbinarClick);
-  onClick('planBtn',openPay);
-  onClick('btnClosePreview',closeHtmlPreview);
-  onClick('btnReloadPreview',function(){if(S.previewCode)$('prevFrame').srcdoc=S.previewCode});
-  onClick('btnOpenNewTab',function(){
-    if(!S.previewCode)return;
-    var w=window.open('','_blank');w.document.open();w.document.write(S.previewCode);w.document.close();
+  onClick('btnInvite', toggleInviteField);
+  onClick('nn', newChat);
+  onClick('lo', logout);
+  onClick('stg', openSettings);
+  onClick('inviteBtn', openInvite);
+  onClick('se', onSendClick);          // <-- botão de enviar corrigido
+  onClick('tg', openSidebar);
+  onClick('sbClose', closeSidebar);
+  onClick('sbOverlay', closeSidebar);
+  onClick('btnImg', onImgClick);
+  onClick('btnMic', onMicClick);
+  onClick('btnGenImg', onGenImgClick);
+  onClick('btnTurbinar', onTurbinarClick);
+  onClick('planBtn', openPay);
+  onClick('btnClosePreview', closeHtmlPreview);
+  onClick('btnReloadPreview', function(){ if (S.previewCode) $('prevFrame').srcdoc = S.previewCode; });
+  onClick('btnOpenNewTab', function(){
+    if (!S.previewCode) return;
+    var w = window.open('', '_blank');
+    w.document.open();
+    w.document.write(S.previewCode);
+    w.document.close();
   });
-  onClick('turboCancel',function(){$('modalTurbo').classList.remove('on')});
-  onClick('turboUse',function(){
-    var t=$('turboText').value.trim();if(t)$('ui').value=t;
+  onClick('turboCancel', function(){ $('modalTurbo').classList.remove('on'); });
+  onClick('turboUse', function(){
+    var t = $('turboText').value.trim();
+    if (t) $('ui').value = t;
     $('modalTurbo').classList.remove('on');
-    $('ui').style.height='auto';$('ui').style.height=Math.min($('ui').scrollHeight,120)+'px';$('ui').focus();
+    $('ui').style.height = 'auto';
+    $('ui').style.height = Math.min($('ui').scrollHeight, 120) + 'px';
+    $('ui').focus();
   });
-  onClick('payCancelBtn',function(){$('modalPay').classList.remove('on')});
-  onClick('payOkBtn',function(){$('modalPay').classList.remove('on')});
-  onClick('copyPixBtn',function(){if(navigator.clipboard)navigator.clipboard.writeText(PIX_KEY).then(function(){toast('Chave PIX copiada!')})});
-  onClick('inviteCloseBtn',function(){$('modalInvite').classList.remove('on')});
-  onClick('copyInviteBtn',function(){if(navigator.clipboard)navigator.clipboard.writeText(S.inviteCode).then(function(){toast('Codigo copiado!')})});
-  onClick('settingsCloseBtn',function(){$('modalSettings').classList.remove('on')});
-  onClick('stgChangePass',function(){$('changePassSection').style.display='block';$('stgCurrentPass').value='';$('stgNewPass').value='';$('stgConfirmPass').value='';$('stgPassErr').textContent=''});
-  onClick('stgChangeCancel',function(){$('changePassSection').style.display='none'});
-  onClick('stgResetPass',async function(){
-    if(!S.user||!S.user.email)return;
-    try{await sendPasswordResetEmail(auth,S.user.email);toast('Link enviado para '+S.user.email)}
-    catch(e){toast('Erro: '+e.message)}
+  onClick('payCancelBtn', function(){ $('modalPay').classList.remove('on'); });
+  onClick('payOkBtn', function(){ $('modalPay').classList.remove('on'); });
+  onClick('copyPixBtn', function(){
+    if (navigator.clipboard) navigator.clipboard.writeText(PIX_KEY).then(function(){ toast('Chave PIX copiada!'); });
   });
-  onClick('stgChangeSave',async function(){
-    var cur=$('stgCurrentPass').value;var nova=$('stgNewPass').value;var conf=$('stgConfirmPass').value;
-    $('stgPassErr').textContent='';
-    if(!cur||!nova||!conf){$('stgPassErr').textContent='Preencha todos';return}
-    if(nova.length<6){$('stgPassErr').textContent='Senha 6+';return}
-    if(nova!==conf){$('stgPassErr').textContent='Senhas diferentes';return}
-    try{
-      var user=auth.currentUser;
-      var cred=EmailAuthProvider.credential(user.email,cur);
-      await reauthenticateWithCredential(user,cred);
-      await updatePassword(user,nova);
-      toast('Senha alterada!');
-      $('changePassSection').style.display='none';
-    }catch(e){$('stgPassErr').textContent=(e.code||e.message).indexOf('wrong-password')>=0?'Senha atual errada':(e.code||e.message)}
+  onClick('inviteCloseBtn', function(){ $('modalInvite').classList.remove('on'); });
+  onClick('copyInviteBtn', function(){
+    if (navigator.clipboard) navigator.clipboard.writeText(S.inviteCode).then(function(){ toast('Código copiado!'); });
   });
-  onClick('stgDeleteAccount',function(){$('deleteSection').style.display='block';$('deleteConfirm').value='';$('stgDeleteErr').textContent='';$('deleteConfirmBtn').disabled=true;$('deleteConfirm').focus()});
-  onClick('deleteCancel',function(){$('deleteSection').style.display='none'});
-  onClick('deleteConfirmBtn',async function(){
-    if($('deleteConfirm').value.trim()!=='DELETAR')return;
-    $('stgDeleteErr').textContent='';$('deleteConfirmBtn').disabled=true;$('deleteConfirmBtn').textContent='Deletando...';
-    try{
-      var user=auth.currentUser;if(!user)throw new Error('Não autenticado');
-      var myUid=user.uid;
-      try{await remove(ref(db,'users/'+myUid+'/chats'))}catch(e){}
-      try{var cs=await get(ref(db,'users/'+myUid+'/codigoConvite'));if(cs.exists())await remove(ref(db,'convites/'+cs.val()))}catch(e){}
-      try{await remove(ref(db,'users/'+myUid))}catch(e){}
-      await deleteUser(user);
-      toast('Conta deletada!');
-      setTimeout(function(){location.reload()},1500);
-    }catch(e){
-      var msg=(e.code||e.message).indexOf('requires-recent-login')>=0?'Faça login de novo antes de deletar':(e.code||e.message);
-      $('stgDeleteErr').textContent=msg;
-      $('deleteConfirmBtn').disabled=false;$('deleteConfirmBtn').textContent='Deletar conta';
+  onClick('settingsCloseBtn', function(){ $('modalSettings').classList.remove('on'); });
+  onClick('stgChangePass', function(){
+    $('changePassSection').style.display = 'block';
+    $('stgCurrentPass').value = '';
+    $('stgNewPass').value = '';
+    $('stgConfirmPass').value = '';
+    $('stgPassErr').textContent = '';
+  });
+  onClick('stgChangeCancel', function(){ $('changePassSection').style.display = 'none'; });
+  onClick('stgResetPass', async function(){
+    if (!S.user || !S.user.email) return;
+    try {
+      await sendPasswordResetEmail(auth, S.user.email);
+      toast('Link enviado para ' + S.user.email);
+    } catch (e) {
+      toast('Erro: ' + e.message);
     }
   });
-  onClick('limitCloseBtn',function(){$('modalLimit').classList.remove('on')});
+  onClick('stgChangeSave', async function(){
+    var cur = $('stgCurrentPass').value;
+    var nova = $('stgNewPass').value;
+    var conf = $('stgConfirmPass').value;
+    $('stgPassErr').textContent = '';
+    if (!cur || !nova || !conf) { $('stgPassErr').textContent = 'Preencha todos'; return; }
+    if (nova.length < 6) { $('stgPassErr').textContent = 'Senha 6+'; return; }
+    if (nova !== conf) { $('stgPassErr').textContent = 'Senhas diferentes'; return; }
+    try {
+      var user = auth.currentUser;
+      var cred = EmailAuthProvider.credential(user.email, cur);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, nova);
+      toast('Senha alterada!');
+      $('changePassSection').style.display = 'none';
+    } catch (e) {
+      $('stgPassErr').textContent = (e.code || e.message).indexOf('wrong-password') >= 0 ? 'Senha atual errada' : (e.code || e.message);
+    }
+  });
+  onClick('stgDeleteAccount', function(){
+    $('deleteSection').style.display = 'block';
+    $('deleteConfirm').value = '';
+    $('stgDeleteErr').textContent = '';
+    $('deleteConfirmBtn').disabled = true;
+    $('deleteConfirm').focus();
+  });
+  onClick('deleteCancel', function(){ $('deleteSection').style.display = 'none'; });
+  onClick('deleteConfirmBtn', async function(){
+    if ($('deleteConfirm').value.trim() !== 'DELETAR') return;
+    $('stgDeleteErr').textContent = '';
+    $('deleteConfirmBtn').disabled = true;
+    $('deleteConfirmBtn').textContent = 'Deletando...';
+    try {
+      var user = auth.currentUser;
+      if (!user) throw new Error('Não autenticado');
+      var myUid = user.uid;
+      try { await remove(ref(db, 'users/' + myUid + '/chats')); } catch (e) {}
+      try {
+        var cs = await get(ref(db, 'users/' + myUid + '/codigoConvite'));
+        if (cs.exists()) await remove(ref(db, 'convites/' + cs.val()));
+      } catch (e) {}
+      try { await remove(ref(db, 'users/' + myUid)); } catch (e) {}
+      await deleteUser(user);
+      toast('Conta deletada!');
+      setTimeout(function(){ location.reload(); }, 1500);
+    } catch (e) {
+      var msg = (e.code || e.message).indexOf('requires-recent-login') >= 0 ? 'Faça login de novo antes de deletar' : (e.code || e.message);
+      $('stgDeleteErr').textContent = msg;
+      $('deleteConfirmBtn').disabled = false;
+      $('deleteConfirmBtn').textContent = 'Deletar conta';
+    }
+  });
+  onClick('limitCloseBtn', function(){ $('modalLimit').classList.remove('on'); });
   
   // deleteConfirm input listener
-  var dc=$('deleteConfirm');
-  if(dc)dc.addEventListener('input',function(e){$('deleteConfirmBtn').disabled=e.target.value.trim()!=='DELETAR'});
+  var dc = $('deleteConfirm');
+  if (dc) dc.addEventListener('input', function(e){
+    $('deleteConfirmBtn').disabled = e.target.value.trim() !== 'DELETAR';
+  });
   
   // payment file
-  var pf=$('payFile');
-  if(pf)pf.addEventListener('change',function(e){
-    var file=e.target.files[0];if(!file)return;
-    if(file.size>15*1024*1024){toast('Imagem muito grande');return}
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      S.payAttachment={data:ev.target.result,name:file.name};
-      $('payUploadArea').style.display='none';
-      $('payPreview').innerHTML='<div class="upload-preview"><img src="'+ev.target.result+'"><button class="upload-remove" id="payRemoveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
-      var rb=$('payRemoveBtn');
-      if(rb)rb.onclick=function(){S.payAttachment=null;$('payUploadArea').style.display='block';$('payPreview').innerHTML='';$('payFile').value=''};
+  var pf = $('payFile');
+  if (pf) pf.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) { toast('Imagem muito grande'); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      S.payAttachment = { data: ev.target.result, name: file.name };
+      $('payUploadArea').style.display = 'none';
+      $('payPreview').innerHTML = '<div class="upload-preview"><img src="' + ev.target.result + '"><button class="upload-remove" id="payRemoveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+      var rb = $('payRemoveBtn');
+      if (rb) rb.onclick = function(){
+        S.payAttachment = null;
+        $('payUploadArea').style.display = 'block';
+        $('payPreview').innerHTML = '';
+        $('payFile').value = '';
+      };
     };
     reader.readAsDataURL(file);
   });
-  var pua=$('payUploadArea');
-  if(pua)pua.onclick=function(){$('payFile').click()};
-  var psb=$('paySendBtn');
-  if(psb)psb.onclick=async function(){
-    var nome=$('payName').value.trim();var email=$('payEmail').value.trim();
-    if(!nome){$('payErr').textContent='Digite seu nome';return}
-    if(!S.payAttachment){$('payErr').textContent='Anexe o comprovante';return}
-    $('payErr').textContent='';psb.disabled=true;psb.textContent='Enviando...';
-    try{
-      var res=await fetch(RENDER_URL+'/comprovante',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:S.user.uid,nome:nome,email:email,imagemBase64:S.payAttachment.data})});
-      var data=await res.json();
-      if(data.ok){$('payContent').style.display='none';$('paySuccess').style.display='block'}
-      else{$('payErr').textContent=data.error||'Erro ao enviar'}
-    }catch(e){$('payErr').textContent='Erro de conexão'}
-    psb.disabled=false;psb.textContent='Enviar comprovante';
+  var pua = $('payUploadArea');
+  if (pua) pua.onclick = function(){ $('payFile').click(); };
+  var psb = $('paySendBtn');
+  if (psb) psb.onclick = async function(){
+    var nome = $('payName').value.trim();
+    var email = $('payEmail').value.trim();
+    if (!nome) { $('payErr').textContent = 'Digite seu nome'; return; }
+    if (!S.payAttachment) { $('payErr').textContent = 'Anexe o comprovante'; return; }
+    $('payErr').textContent = '';
+    psb.disabled = true;
+    psb.textContent = 'Enviando...';
+    try {
+      var res = await fetch(RENDER_URL + '/comprovante', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: S.user.uid,
+          nome: nome,
+          email: email,
+          imagemBase64: S.payAttachment.data
+        })
+      });
+      var data = await res.json();
+      if (data.ok) {
+        $('payContent').style.display = 'none';
+        $('paySuccess').style.display = 'block';
+      } else {
+        $('payErr').textContent = data.error || 'Erro ao enviar';
+      }
+    } catch (e) {
+      $('payErr').textContent = 'Erro de conexão';
+    }
+    psb.disabled = false;
+    psb.textContent = 'Enviar comprovante';
   };
   
   // file input
-  var fi=$('fileInput');
-  if(fi)fi.addEventListener('change',onFileSelected);
+  var fi = $('fileInput');
+  if (fi) fi.addEventListener('change', onFileSelected);
   
   // chat search
-  var cs=$('chatSearch');
-  if(cs)cs.addEventListener('input',function(e){renderList(e.target.value)});
+  var cs = $('chatSearch');
+  if (cs) cs.addEventListener('input', function(e){ renderList(e.target.value); });
   
   // textarea
-  var ui=$('ui');
-  if(ui){
-    ui.addEventListener('input',function(){ui.style.height='auto';ui.style.height=Math.min(ui.scrollHeight,120)+'px'});
-    ui.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!S.busy)send()}});
+  var ui = $('ui');
+  if (ui) {
+    ui.addEventListener('input', function(){
+      ui.style.height = 'auto';
+      ui.style.height = Math.min(ui.scrollHeight, 120) + 'px';
+    });
+    ui.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!S.busy) send();
+      }
+    });
   }
   
   // mode buttons
   document.querySelectorAll('.mb').forEach(function(b){
-    b.onclick=function(){
-      if(S.busy)stopResponse();
-      var m=b.getAttribute('data-m');if(!M[m])return;
-      S.mode=m;$('cs').textContent=M[m].sub;updateModes();updatePlaceholder();$('ui').focus();
+    b.onclick = function(){
+      if (S.busy) stopResponse();
+      var m = b.getAttribute('data-m');
+      if (!M[m]) return;
+      S.mode = m;
+      $('cs').textContent = M[m].sub;
+      updateModes();
+      updatePlaceholder();
+      $('ui').focus();
     };
   });
   
   // code copy/run global delegation
-  document.addEventListener('click',function(e){
-    var runBtn=e.target.closest&&e.target.closest('.cpb.run');
-    if(runBtn){
-      var rid=runBtn.getAttribute('data-run');
-      var rel=document.getElementById(rid);
-      if(rel)openHtmlPreview(rel.textContent,'Preview HTML');
+  document.addEventListener('click', function(e){
+    var runBtn = e.target.closest && e.target.closest('.cpb.run');
+    if (runBtn) {
+      var rid = runBtn.getAttribute('data-run');
+      var rel = document.getElementById(rid);
+      if (rel) openHtmlPreview(rel.textContent, 'Preview HTML');
       return;
     }
-    var copyBtn=e.target.closest&&e.target.closest('.cpb:not(.run)');
-    if(copyBtn){
-      var id=copyBtn.getAttribute('data-c');
-      var el=document.getElementById(id);
-      if(el&&navigator.clipboard){
+    var copyBtn = e.target.closest && e.target.closest('.cpb:not(.run)');
+    if (copyBtn) {
+      var id = copyBtn.getAttribute('data-c');
+      var el = document.getElementById(id);
+      if (el && navigator.clipboard) {
         navigator.clipboard.writeText(el.textContent).then(function(){
           copyBtn.classList.add('cp');
-          copyBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
-          setTimeout(function(){copyBtn.classList.remove('cp');copyBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar'},1800);
+          copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+          setTimeout(function(){
+            copyBtn.classList.remove('cp');
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar';
+          }, 1800);
         });
       }
     }
-    var imgCopy=e.target.closest&&e.target.closest('[data-copy="1"]');
-    if(imgCopy){
-      var url=imgCopy.getAttribute('data-url');
-      if(url&&navigator.clipboard){
-        navigator.clipboard.writeText(url).then(function(){toast('URL copiada!')});
+    var imgCopy = e.target.closest && e.target.closest('[data-copy="1"]');
+    if (imgCopy) {
+      var url = imgCopy.getAttribute('data-url');
+      if (url && navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function(){ toast('URL copiada!'); });
       }
     }
   });
   
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('htmlPreview').classList.contains('on'))closeHtmlPreview()});
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && $('htmlPreview').classList.contains('on')) closeHtmlPreview();
+  });
   
   console.log('[EXILED] Eventos anexados!');
 }
 
-function doLoginNotUsed(){}
-
-function updateModes(){document.querySelectorAll('.mb').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')===S.mode)})}
+function updateModes(){
+  document.querySelectorAll('.mb').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-m') === S.mode);
+  });
+}
 
 // Redireciona erros de módulo pra um alert
-window.addEventListener('error',function(e){
-  if(e.message)console.log('ERRO:',e.message);
+window.addEventListener('error', function(e){
+  if (e.message) console.log('ERRO:', e.message);
 });
 
 // Aguarda DOM e inicia
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',function(){
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function(){
     attachAll();
     initFirebase();
   });
-}else{
+} else {
   attachAll();
   initFirebase();
 }
 
 function initFirebase(){
-  getRedirectResult(auth).then(function(result){if(result&&result.user)console.log('Redirect OK');hideLoading()}).catch(function(e){hideLoading()});
+  getRedirectResult(auth).then(function(result){
+    if (result && result.user) console.log('Redirect OK');
+    hideLoading();
+  }).catch(function(e){ hideLoading(); });
   
-  onAuthStateChanged(auth,async function(user){
-    if(user){
-      S.user={uid:user.uid,name:user.displayName||user.email.split('@')[0],email:user.email,photo:user.photoURL||''};
+  onAuthStateChanged(auth, async function(user){
+    if (user) {
+      S.user = {
+        uid: user.uid,
+        name: user.displayName || user.email.split('@')[0],
+        email: user.email,
+        photo: user.photoURL || ''
+      };
       showLoading('Carregando perfil...');
-      try{
-        var snap=await get(ref(db,'users/'+user.uid+'/profile'));
-        if(!snap.exists()){
-          await set(ref(db,'users/'+user.uid+'/profile'),{name:S.user.name,email:S.user.email,createdAt:Date.now()});
-          await set(ref(db,'users/'+user.uid+'/plano'),'free');
-          var meuCod='EXILED-'+user.uid.slice(0,6).toUpperCase();
-          await set(ref(db,'users/'+user.uid+'/codigoConvite'),meuCod);
-          await set(ref(db,'users/'+user.uid+'/convitesFeitos'),0);
-          await set(ref(db,'users/'+user.uid+'/convitesRecompensados'),false);
-          await set(ref(db,'convites/'+meuCod),{uid:user.uid});
-        }else{var p=snap.val();if(p.name)S.user.name=p.name}
-      }catch(e){console.log('profile',e)}
-      try{
-        var csnap=await get(ref(db,'users/'+user.uid+'/chats'));
-        if(csnap.exists())S.chats=csnap.val();
-        if(S.chatListener){try{S.chatListener()}catch(e){}}
-        S.chatListener=onValue(ref(db,'users/'+user.uid+'/chats'),function(snap){
-          if(!snap.exists())return;
-          var data=snap.val();var changed=false;
-          Object.keys(data).forEach(function(id){
-            if(!S.chats[id]){S.chats[id]=data[id];changed=true}
-            else if(JSON.stringify(S.chats[id].messages)!==JSON.stringify(data[id].messages)){S.chats[id]=data[id];changed=true}
+      try {
+        var snap = await get(ref(db, 'users/' + user.uid + '/profile'));
+        if (!snap.exists()) {
+          await set(ref(db, 'users/' + user.uid + '/profile'), {
+            name: S.user.name,
+            email: S.user.email,
+            createdAt: Date.now()
           });
-          if(changed)renderList($('chatSearch')?$('chatSearch').value:'');
+          await set(ref(db, 'users/' + user.uid + '/plano'), 'free');
+          var meuCod = 'EXILED-' + user.uid.slice(0, 6).toUpperCase();
+          await set(ref(db, 'users/' + user.uid + '/codigoConvite'), meuCod);
+          await set(ref(db, 'users/' + user.uid + '/convitesFeitos'), 0);
+          await set(ref(db, 'users/' + user.uid + '/convitesRecompensados'), false);
+          await set(ref(db, 'convites/' + meuCod), { uid: user.uid });
+        } else {
+          var p = snap.val();
+          if (p.name) S.user.name = p.name;
+        }
+      } catch (e) {
+        console.log('profile', e);
+      }
+      try {
+        var csnap = await get(ref(db, 'users/' + user.uid + '/chats'));
+        if (csnap.exists()) S.chats = csnap.val();
+        if (S.chatListener) {
+          try { S.chatListener(); } catch (e) {}
+        }
+        S.chatListener = onValue(ref(db, 'users/' + user.uid + '/chats'), function(snap){
+          if (!snap.exists()) return;
+          var data = snap.val();
+          var changed = false;
+          Object.keys(data).forEach(function(id){
+            if (!S.chats[id]) {
+              S.chats[id] = data[id];
+              changed = true;
+            } else if (JSON.stringify(S.chats[id].messages) !== JSON.stringify(data[id].messages)) {
+              S.chats[id] = data[id];
+              changed = true;
+            }
+          });
+          if (changed) renderList($('chatSearch') ? $('chatSearch').value : '');
         });
-      }catch(e){console.log('chats',e)}
+      } catch (e) {
+        console.log('chats', e);
+      }
       await loadPlano();
       await loadInvite();
       hideLoading();
       enterApp();
-    }else{
+    } else {
       hideLoading();
-      var app=$('app');if(app)app.classList.remove('on');
-      var login=$('login');if(login)login.style.display='flex';
+      var app = $('app');
+      if (app) app.classList.remove('on');
+      var login = $('login');
+      if (login) login.style.display = 'flex';
     }
   });
 }
