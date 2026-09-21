@@ -39,19 +39,26 @@ input:focus{border-color:#555;background:var(--bg3)}
 
 #app{display:none;width:100%;height:100%;height:100dvh}
 #app.on{display:flex}
-.sb{width:280px;background:var(--bg1);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;transition:margin-left .3s ease}
+
+/* OVERLAY SIDEBAR */
+.sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:40;display:none;opacity:0;transition:opacity .3s ease}
+.sb-overlay.on{display:block;opacity:1}
+
+.sb{width:280px;background:var(--bg1);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s ease;position:relative;z-index:50}
 .sbh{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
 .sbl{width:36px;height:36px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sbl svg{width:20px;height:20px;stroke:#000;stroke-width:2.2;fill:none}
-.sbh h2{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.sbh h2{font-size:15px;font-weight:800;letter-spacing:-.3px;flex:1}
 .sbh h2 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sbh small{color:var(--dim);font-size:10px;display:block}
+.sb-close{width:32px;height:32px;border-radius:8px;display:none;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.sb-close:hover{background:var(--bg3)}
+.sb-close svg{width:18px;height:18px;stroke:#fff;stroke-width:2.2;fill:none}
 .nb{margin:12px;padding:11px;background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#fff;transition:all .2s}
 .nb:hover{background:var(--grad);color:#000}
 .nb:hover svg{stroke:#000}
 .nb svg{width:16px;height:16px;stroke:#fff;stroke-width:2.2;fill:none;transition:stroke .2s}
 
-/* BUSCA */
 .search-wrap{margin:0 12px 10px;padding:0 12px;background:var(--bg2);border:1px solid var(--bd2);border-radius:10px;display:flex;align-items:center;gap:8px;transition:.2s}
 .search-wrap:focus-within{border-color:#555;background:var(--bg3)}
 .search-wrap svg{width:14px;height:14px;stroke:var(--dim);stroke-width:2;fill:none;flex-shrink:0}
@@ -345,8 +352,9 @@ input:focus{border-color:#555;background:var(--bg3)}
 
 .mo{display:none}
 @media(max-width:900px){
-  .sb{position:fixed;left:0;top:0;bottom:0;z-index:50;box-shadow:8px 0 40px rgba(0,0,0,.7)}
-  .sb:not(.op){margin-left:-280px}
+  .sb{position:fixed;left:0;top:0;bottom:0;z-index:60;box-shadow:8px 0 40px rgba(0,0,0,.7);transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+  .sb-close{display:flex}
   .mo{display:flex}
   .mb span{display:none}
   .sg{grid-template-columns:1fr}
@@ -396,10 +404,12 @@ input:focus{border-color:#555;background:var(--bg3)}
 </div>
 
 <div id="app">
+  <div class="sb-overlay" id="sbOverlay"></div>
   <aside class="sb" id="sb">
     <div class="sbh">
       <div class="sbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
-      <div><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
+      <div style="flex:1;min-width:0"><h2>EXILED <span>AI</span></h2><small>Powered by Groq + Agnes</small></div>
+      <button class="sb-close" id="sbClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <button class="nb" id="nn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Chat</button>
     <div class="search-wrap">
@@ -831,6 +841,18 @@ function hideLoading(){$('loadingOverlay').classList.remove('on')}
 function showLimitModal(){$('limitCount').textContent=limiteBase('imageGen');$('modalLimit').classList.add('on')}
 window.closeLimitModal=function(){$('modalLimit').classList.remove('on')};
 
+// ========== SIDEBAR MOBILE ==========
+function openSidebar(){
+  $('sb').classList.add('open');
+  $('sbOverlay').classList.add('on');
+}
+function closeSidebar(){
+  $('sb').classList.remove('open');
+  $('sbOverlay').classList.remove('on');
+}
+window.openSidebar=openSidebar;
+window.closeSidebar=closeSidebar;
+
 function applyPlano(){
   var btn=$('planBtn'),title=$('planBtnTitle'),sub=$('planBtnSub'),av=$('av');
   if(S.plano==='premium'){
@@ -1023,6 +1045,31 @@ function toggleInviteField(){
 }
 window.toggleInviteField=toggleInviteField;
 
+// Busca código de convite varrendo users (fallback)
+async function findUserByInviteCode(codigo){
+  codigo=codigo.toUpperCase().trim();
+  // Tentativa 1: index direto
+  try{
+    var s=await get(ref(db,'convites/'+codigo));
+    if(s.exists()&&s.val().uid)return s.val().uid;
+  }catch(e){console.log('tentativa 1',e)}
+  // Tentativa 2: varrer /users
+  try{
+    var users=await get(ref(db,'users'));
+    if(users.exists()){
+      var data=users.val();
+      var found=null;
+      Object.keys(data).forEach(function(u){
+        if(data[u]&&data[u].codigoConvite&&String(data[u].codigoConvite).toUpperCase()===codigo){
+          found=u;
+        }
+      });
+      return found;
+    }
+  }catch(e){console.log('tentativa 2',e)}
+  return null;
+}
+
 $('toggleMode').addEventListener('click',function(){
   S.authMode=S.authMode==='login'?'signup':'login';
   var isSignup=S.authMode==='signup';
@@ -1050,11 +1097,13 @@ $('btnEmail').addEventListener('click',async function(){
       var quemConvidou=null;
       if(codigoConvite){
         showLoading('Validando convite...');
-        try{
-          var invSnap=await get(ref(db,'convites/'+codigoConvite));
-          if(invSnap.exists()){quemConvidou=invSnap.val().uid;}
-          else{$('authErr').textContent='Código de convite inválido';$('btnEmail').disabled=false;hideLoading();return;}
-        }catch(e){console.log('convite',e);}
+        quemConvidou=await findUserByInviteCode(codigoConvite);
+        if(!quemConvidou){
+          $('authErr').textContent='Código de convite inválido';
+          $('btnEmail').disabled=false;
+          hideLoading();
+          return;
+        }
       }
       var cred=await createUserWithEmailAndPassword(auth,email,pass);
       await updateProfile(cred.user,{displayName:name});
@@ -1139,9 +1188,8 @@ onAuthStateChanged(auth,async function(user){
         var data=snap.val();
         var changed=false;
         Object.keys(data).forEach(function(id){
-          if(!S.chats[id]){
-            S.chats[id]=data[id];changed=true;
-          }else{
+          if(!S.chats[id]){S.chats[id]=data[id];changed=true;}
+          else{
             if(JSON.stringify(S.chats[id].messages)!==JSON.stringify(data[id].messages)){
               S.chats[id]=data[id];changed=true;
             }
@@ -1170,7 +1218,9 @@ function bindEvents(){
   $('stg').addEventListener('click',openSettings);
   $('inviteBtn').addEventListener('click',openInvite);
   $('se').addEventListener('click',onSendClick);
-  $('tg').addEventListener('click',function(){$('sb').classList.toggle('op')});
+  $('tg').addEventListener('click',openSidebar);
+  $('sbClose').addEventListener('click',closeSidebar);
+  $('sbOverlay').addEventListener('click',closeSidebar);
   $('btnImg').addEventListener('click',onImgClick);
   $('btnMic').addEventListener('click',onMicClick);
   $('btnGenImg').addEventListener('click',onGenImgClick);
@@ -1204,6 +1254,7 @@ function newChat(){
   S.chats[id]={id:id,title:'Novo Chat',messages:[],t:Date.now()};
   S.cur=id;save();renderList();renderChat();
   if($('chatSearch'))$('chatSearch').value='';
+  if(innerWidth<=900)closeSidebar();
 }
 
 function save(){
@@ -1218,7 +1269,7 @@ function save(){
 function switchChat(id){
   if(S.busy)stopResponse();
   S.cur=id;renderList($('chatSearch')?$('chatSearch').value:'');renderChat();
-  if(innerWidth<=900)$('sb').classList.remove('op');
+  if(innerWidth<=900)closeSidebar();
 }
 
 function delChat(id,e){
